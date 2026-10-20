@@ -1,0 +1,43 @@
+{
+  "chrome": "152.0.7977.64",
+  "playwright": "1.60.0",
+  "pages": 9,
+  "sha256": {
+    "p01.png": "a2f7229012989a0548ac847e579f3245f5f6ddf71514f24ae44a431f136c9aa0",
+    "p02.png": "916e8440bd3f528eabce563904e31a8e80ff2ea4109a0229123544b23c46af94",
+    "p03.png": "47bb12ed5452a49d03984829f6d68bad6254826375392d706f3e16cc51d9cbea",
+    "p04.png": "9d7f33cb07886a9640e187efed4c39b7d80ed9443d2523a6767d1ccc9ac75bb4",
+    "p05.png": "5ad1d6e7be63f78d1f3d97e4d0277d0253e6b6be617242d6a72316094557a63b",
+    "p06.png": "eade550be3827a3ca7ae8b11bf667474e3732dec922a50cbc5ca06d3c96942db",
+    "p07.png": "55f178e2a90ea5beca5e95f329207cb4fef3d0b527198dcb23e057b196e1e1c4",
+    "p08.png": "98ba2060cfc99db35c66958eed576f1179566fa918373d7c7328230df7c508bf",
+    "p09.png": "1c1a85af51a0a962c22e6e3186c1121e22531c98998f6e687677e1b8fe0b2d07"
+  },
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "chromeVersion": "152.0.7977.64",
+    "playwrightVersion": "1.60.0",
+    "browserSha256": "79832d1e60cbad9323c07339f9608bc0ce93cb9242b9b5481c04a0c536720980",
+    "fontInventorySha256": "18e393e867896c06726b5cfe773c6b49c491970d81e0b9839c3292ac1ee23539",
+    "browserArgs": [
+      "--disable-gpu",
+      "--force-color-profile=srgb",
+      "--disable-lcd-text",
+      "--disable-partial-raster"
+    ],
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    }
+  },
+  "approval": {
+    "approvedAt": "2026-10-20",
+    "authority": "Explicit owner approval of the three Public visual targets and implementation plan in this task",
+    "engineSource": "f2c33fe124e864114020d15b66749025c8bb0046",
+    "appSource": "d7508f77ed044ccc3ab9da40bf5a79076c33129e",
+    "candidateReviewIndexSha256": "d9fc02767e8bc2ce47c540508ca9ce1aaaa240000d7d327f6585a97706e112b2",
+    "candidateEvidenceSha256": "98d38b4f746264905f678474a605e42509c5da32a36fd7813d13196ad960cc3a",
+    "originalFontInventorySha256": "f12570aff1d9833f59dc960bd63017bb603d5615cfd67f2601073fec31961f43"
+  }
+}
