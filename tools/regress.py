@@ -1,5 +1,8 @@
 """苹果风原版回归：确定性逐页截图，和甬舟 94 页基准逐像素比对，证明"改过的引擎 = 原版效果"。
 
+Public 图元样板：engine 检查使用 platforms/<系统>-x64 的获批目标，先核验环境。
+根目录图片为历史档案，不再由 baseline 子命令覆盖；新目标必须先审查候选原图。
+
 用法：
   python3 tools/regress.py engine [--engine-root 目录] [--work 目录] [--suite 甬舟94|图元样板]
       改过引擎就跑这个：默认（--suite 甬舟94）用 风格清单 + examples/甬舟94 构建 94 页，截图后和 baselines/甬舟94 基准比对；
@@ -45,6 +48,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 from tools.build_deck import build  # noqa: E402
+from tools.visual_environment import environment_snapshot, platform_baseline, require_environment  # noqa: E402
 
 EXAMPLE_DECK_DIR = REPO / "examples/甬舟94"
 BASELINE_DIR = REPO / "baselines/甬舟94"
@@ -110,7 +114,7 @@ async def shoot_page(browser, deck_uri, page_number, shot_dir, errors):
     await page.close()
 
 
-async def shoot_deck(deck_path, shot_dir):
+async def shoot_deck(deck_path, shot_dir, expected_environment=None):
     """逐页确定性截图，返回 (页数, JS 报错列表, 浏览器版本)。"""
     shot_dir.mkdir(parents=True, exist_ok=True)
     for old_shot in shot_dir.glob("p*.png"):
@@ -120,6 +124,9 @@ async def shoot_deck(deck_path, shot_dir):
         deck_uri = write_frozen_copy(deck_path, Path(frozen_dir)).as_uri()
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(**browser_launch_kwargs(CHROME_ARGS))
+            if expected_environment is not None:
+                require_environment(expected_environment, environment_snapshot(
+                    os.environ.get("PPT_CHROME_PATH"), browser.version, CHROME_ARGS, VIEWPORT))
             counter = await browser.new_page()
             await counter.goto(deck_uri)
             total = await counter.evaluate("document.querySelectorAll('.slide').length")
@@ -192,9 +199,14 @@ def compare_shots(baseline_dir, shot_dir, diff_dir):
 
 def warn_version_change(baseline_dir, shot_dir):
     try:
-        baseline_meta = json.loads((baseline_dir / "meta.json").read_text())
+        meta_path = baseline_dir / "meta.json"
+        if meta_path.exists():
+            baseline_meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        else:
+            environment = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))["environment"]
+            baseline_meta = {"chrome": environment["chromeVersion"], "playwright": environment["playwrightVersion"]}
         shot_meta = json.loads((shot_dir / "meta.json").read_text())
-    except (OSError, json.JSONDecodeError):
+    except (OSError, KeyError, json.JSONDecodeError):
         print("提示：缺少 meta.json，无法核对浏览器版本")
         return
     for key in ("chrome", "playwright"):
@@ -208,8 +220,8 @@ def build_example_deck(engine_root, build_dir, deck_dir=EXAMPLE_DECK_DIR):
     return build(Path(deck_dir).resolve(), Path(engine_root).resolve(), build_dir / "regress.html", [])["out"]
 
 
-def shoot(deck_path, shot_dir):
-    total, errors, browser_version = asyncio.run(shoot_deck(Path(deck_path), Path(shot_dir)))
+def shoot(deck_path, shot_dir, expected_environment=None):
+    total, errors, browser_version = asyncio.run(shoot_deck(Path(deck_path), Path(shot_dir), expected_environment))
     print(f"截图 {total} 页（Chrome {browser_version}）；JS 报错：{errors or '无'}")
     return not errors
 
@@ -236,8 +248,8 @@ def rebaseline(deck_path, baseline_dir):
 
 
 def verify_baseline_manifest(baseline_dir):
-    """基准 PNG 不进 git，比对前先核对它们和已提交的清单一致，防止拿错基准比出假绿。"""
-    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text())
+    """比对前核对基准 PNG 和已提交清单一致，防止拿错基准比出假绿。"""
+    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))
     mismatched = [name for name, digest in manifest["sha256"].items()
                   if not (baseline_dir / name).exists() or png_digest(baseline_dir / name) != digest]
     return sorted(mismatched)
@@ -253,8 +265,12 @@ def run_engine_check(engine_root, work_dir, deck_dir=None, baseline_dir=None):
     if mismatched:
         print(f"基准截图和清单不一致：{mismatched}；先用 baseline 子命令重做或找回正确基准")
         return False, []
+    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))
+    expected_environment = manifest.get("environment")
+    if Path(baseline_dir).parent.name == "platforms" and expected_environment is None:
+        raise ValueError("Platform baseline environment missing")
     deck_path = build_example_deck(engine_root, work_dir / "build", deck_dir)
-    shots_ok = shoot(deck_path, work_dir / "shots")
+    shots_ok = shoot(deck_path, work_dir / "shots", expected_environment)
     compare_ok, failed_pages = compare_shots(baseline_dir, work_dir / "shots", work_dir / "diffs")
     if failed_pages:
         print(f"首拍差异页 {failed_pages}，逐页单独重拍一次再比；首拍差异图改名为 d<页号>-首拍.png 保留")
@@ -310,8 +326,13 @@ def main():
     if args.command == "engine":
         work_dir = args.work or Path(tempfile.mkdtemp(prefix="regress_engine_"))
         print(f"工作目录：{work_dir}")
-        passed, _ = run_engine_check(args.engine_root, work_dir, *SUITES[args.suite])
+        deck_dir, baseline_dir = SUITES[args.suite]
+        if args.suite == "图元样板":
+            baseline_dir = platform_baseline(baseline_dir)
+        passed, _ = run_engine_check(args.engine_root, work_dir, deck_dir, baseline_dir)
     elif args.command == "baseline":
+        if args.suite == "图元样板":
+            raise SystemExit("Platform baselines require reviewed candidate images; automatic re-recording is disabled")
         passed = rebaseline(args.deck, SUITES[args.suite][1])
     elif args.command == "shoot":
         passed = shoot(args.deck, args.shot_dir)

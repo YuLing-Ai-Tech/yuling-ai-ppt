@@ -14,11 +14,13 @@ BASELINE_DIR = REPO / "baselines/图元样板"
 
 def test_diagram_baseline_manifest_matches_pngs():
     assert regress.verify_baseline_manifest(BASELINE_DIR) == []
+    for key in ("win32-x64", "linux-x64"):
+        assert regress.verify_baseline_manifest(BASELINE_DIR / "platforms" / key) == []
 
 
 @pytest.mark.slow
 def test_diagram_samples_match_baseline_zero_diff(tmp_path):
-    assert regress.run_engine_check(REPO, tmp_path, DECK_DIR, BASELINE_DIR) == (True, [])
+    assert regress.run_engine_check(REPO, tmp_path, DECK_DIR, regress.platform_baseline(BASELINE_DIR)) == (True, [])
 
 
 @pytest.mark.slow

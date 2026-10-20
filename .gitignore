@@ -8,3 +8,5 @@ build/
 # Historical and machine-specific visual baselines are not committed by default.
 baselines/**/*.png
 !baselines/图元样板/*.png
+!baselines/图元样板/platforms/win32-x64/*.png
+!baselines/图元样板/platforms/linux-x64/*.png
