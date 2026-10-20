@@ -7,7 +7,7 @@ import sys
 import pytest
 from playwright.sync_api import sync_playwright
 
-from tests.diagram_helpers import FIXTURES, REPO, open_deck
+from tests.diagram_helpers import FIXTURES, REPO, open_deck, wait_for_entrance_settled
 from tests.test_diagram_drag import cell_size, mouse_drag
 
 pytestmark = pytest.mark.smoke
@@ -28,6 +28,8 @@ def build(deck_dir, out_path):
 
 
 def drag_web_down_one_row(page):
+    # Reload starts a new entrance animation after open_deck's initial wait.
+    wait_for_entrance_settled(page)
     page.keyboard.press("t")
     _, cell_h = cell_size(page)
     mouse_drag(page, "web", 0, cell_h)
