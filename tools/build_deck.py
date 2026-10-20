@@ -73,7 +73,7 @@ def load_deck_config(deck_dir):
     config_path = deck_dir / "deck.json"
     if not config_path.exists():
         sys.exit(f"缺少配置：{config_path}")
-    config = json.loads(config_path.read_text())
+    config = json.loads(config_path.read_text(encoding="utf-8"))
     title = config.get("title") or sys.exit("deck.json 里 title 不能为空")
     return {
         "title": title,
@@ -235,7 +235,7 @@ def load_style_manifest(engine_root, style_name):
     manifest_path = engine_root / "styles" / style_name / "manifest.json"
     if not manifest_path.exists():
         sys.exit(f"找不到风格清单：{manifest_path}")
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     missing = [path for path in manifest["css"] + manifest["js"] + [manifest["backdrop"]] if not (engine_root / path).exists()]
     if missing:
         sys.exit(f"风格清单里的文件不存在：{missing}")
@@ -247,16 +247,16 @@ def build(deck_dir, engine_root, out_path, only):
     manifest = load_style_manifest(engine_root, config["style"])
     # CSS 顺序：清单顺序在前，课件 styles/*.css 按文件名排序在后
     css_files = [engine_root / path for path in manifest["css"]] + sorted((deck_dir / "styles").glob("*.css"))
-    css = "\n".join(path.read_text() for path in css_files)
-    js = "\n".join((engine_root / path).read_text() for path in manifest["js"])
-    backdrop = (engine_root / manifest["backdrop"]).read_text().rstrip("\n")
+    css = "\n".join(path.read_text(encoding="utf-8") for path in css_files)
+    js = "\n".join((engine_root / path).read_text(encoding="utf-8") for path in manifest["js"])
+    backdrop = (engine_root / manifest["backdrop"]).read_text(encoding="utf-8").rstrip("\n")
     slide_files = sorted((deck_dir / "slides").glob("*.html"))
     if only:
         slide_files = [path for path in slide_files if path.name.startswith(tuple(only))]
     if not slide_files:
         sys.exit("slides/ 下没有匹配的片段")
     image_cache = {}
-    slides_html = "\n".join(mark_slide_source(inline_images(path.read_text(), image_cache, config["image_root"]), path.name)
+    slides_html = "\n".join(mark_slide_source(inline_images(path.read_text(encoding="utf-8"), image_cache, config["image_root"]), path.name)
                              for path in slide_files)
     reference_problems = diagram_reference_problems(slides_html)
     if reference_problems:
@@ -266,7 +266,7 @@ def build(deck_dir, engine_root, out_path, only):
                              brand=html.escape(config["brand"]), logo_img=logo_markup(config["logo"]), backdrop=backdrop)
     out_path = out_path or config["output"]
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(page)
+    out_path.write_text(page, encoding="utf-8")
     return {"slides": slides_html.count('<section class="slide'), "images": len(image_cache), "bytes": out_path.stat().st_size,
             "fragments": len(slide_files), "out": out_path}
 

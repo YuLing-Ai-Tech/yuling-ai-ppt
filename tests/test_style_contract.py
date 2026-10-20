@@ -142,7 +142,7 @@ def size_literals():
     """返回 (未登记的位置列表, 出现过的 (文件, 属性, 字面量) 集合)。"""
     unlisted, seen = [], set()
     for path in GENERIC_CSS:
-        relative_path = str(path.relative_to(REPO))
+        relative_path = path.relative_to(REPO).as_posix()
         css_text = blank_css_comments(path.read_text(encoding="utf-8"))
         for line_number, line in enumerate(css_text.splitlines(), 1):
             for declaration in SIZE_DECLARATION.finditer(line):
