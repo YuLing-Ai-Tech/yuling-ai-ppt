@@ -1,0 +1,20 @@
+<section class="slide" data-section="泳道">
+  <div class="eyebrow">图种 5 / 9 · 泳道</div>
+  <h2>客服工单：谁在哪一步接手</h2>
+  <div class="dg" data-grid="24 12">
+    <section class="lane" data-id="customer" data-at="0 0 24 3.7" data-tone="1"><b>客户</b></section>
+    <section class="lane" data-id="agent" data-at="0 4.1 24 3.7" data-tone="5"><b>客服</b></section>
+    <section class="lane" data-id="system" data-at="0 8.2 24 3.7" data-tone="6"><b>系统</b></section>
+    <div class="node" data-id="ask" data-in="customer" data-at="1.6 0.95 3.8 1.8" data-icon="Q"><b>提交问题</b><small>App 内</small></div>
+    <div class="node" data-id="ticket" data-in="system" data-at="4.9 0.95 3.8 1.8" data-icon="T" data-step="1"><b>生成工单</b><small>自动分类</small></div>
+    <div class="node" data-id="claim" data-in="agent" data-at="8.2 0.95 3.8 1.8" data-icon="A" data-step="2"><b>领取工单</b><small>按技能组</small></div>
+    <div class="node" data-id="solve" data-in="agent" data-at="13.2 0.95 3.8 1.8" data-icon="S" data-step="2"><b>处理回复</b><small>知识库辅助</small></div>
+    <div class="node" data-id="rate" data-in="customer" data-at="17.1 0.95 3.8 1.8" data-icon="R" data-step="3"><b>评价</b><small>满意度</small></div>
+    <div class="node" data-id="close" data-in="system" data-at="19.4 0.95 3.8 1.8" data-icon="C" data-step="3"><b>关闭归档</b><small>进报表</small></div>
+    <i class="edge" data-from="ask" data-to="ticket:t"></i>
+    <i class="edge" data-from="ticket:r" data-to="claim:b" data-kind="async"></i>
+    <i class="edge" data-from="claim" data-to="solve" data-kind="human"></i>
+    <i class="edge" data-from="solve" data-to="rate:b" data-kind="human" data-label="回复"></i>
+    <i class="edge" data-from="rate:r" data-to="close:t"></i>
+  </div>
+</section>

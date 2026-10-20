@@ -1,0 +1,7 @@
+/* 通用组件 · 金句块 */
+/* 金句块 */
+.quote { font-size: var(--text-quote); line-height: 1.45; font-weight: 800; max-width: 1500px; }
+.quote .caret { display: inline-block; width: 5px; height: 1em; margin-left: 6px; vertical-align: -.12em; background: var(--theme-solid);
+  animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.src { margin-top: 26px; font-size: var(--text-body); color: var(--ink-2); }

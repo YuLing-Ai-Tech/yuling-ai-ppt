@@ -1,0 +1,15 @@
+/* 通用组件 · 流程 */
+/* 流程：节点 + 流动虚线 + 奔跑光点 */
+.flow { display: flex; align-items: center; gap: 0; }
+.flow .node { flex: none; min-width: 200px; text-align: center; padding: 26px 22px; border-radius: var(--radius-block); background: var(--panel-bg);
+  backdrop-filter: blur(20px); box-shadow: var(--shadow); font-size: var(--text-emphasis); font-weight: 700; }
+.flow .node small { display: block; font-size: 19px; font-weight: 500; color: var(--ink-2); margin-top: 6px; }
+.flow .node.hot { background: var(--theme); color: var(--on-color); box-shadow: 0 18px 40px -14px var(--theme-solid); }
+.flow .node.hot small { color: var(--on-color-soft); }
+.flow .link { flex: 1; min-width: 50px; height: 4px; position: relative;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 12px, transparent 12px 22px); background-size: 22px 4px;
+  animation: dash-run .6s linear infinite; opacity: .6; }
+.flow .link::after { content: ""; position: absolute; top: 50%; left: 0; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 18px 4px var(--accent-glow); animation: packet 1.8s var(--ease) infinite; }
+@keyframes dash-run { to { background-position: 22px 0; } }
+@keyframes packet { from { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { left: calc(100% - 16px); opacity: 0; } }

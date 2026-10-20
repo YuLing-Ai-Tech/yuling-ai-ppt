@@ -1,0 +1,2 @@
+/* 放映内核 · 分步揭示：还没揭示到的 data-step 元素不显示、不播动画；揭示时（加 .step-shown）动画才开始 */
+.slide [data-step]:not(.step-shown) { visibility: hidden !important; animation: none !important; }

@@ -1,0 +1,4 @@
+/* 通用组件 · 图元聚焦：没留下的部分压暗到 --dim-opacity；body.focus-hide 时完全隐藏（D 键切换）；图例始终留着 */
+.dg .dg-part[data-id] { cursor: pointer; }
+.dg.is-focusing .dg-part:not(.is-kept):not(.legend) { opacity: var(--dim-opacity) !important; transition: opacity .35s var(--ease); }
+body.focus-hide .dg.is-focusing .dg-part:not(.is-kept):not(.legend) { visibility: hidden; }

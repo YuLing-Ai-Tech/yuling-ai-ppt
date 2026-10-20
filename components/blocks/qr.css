@@ -1,0 +1,15 @@
+/* 通用组件 · 二维码卡 */
+/* 二维码卡：底色取 --qr-bg，铺在 padding-box；边框配色由风格皮肤给。
+   不用 ::before + z-index:-1 做边框，那样在 isolation 里会盖住底色 */
+.q-pair { display: flex; gap: var(--space-section); justify-content: center; align-items: flex-start; }
+.q-card { width: 340px; padding: 24px 24px 20px; border-radius: 34px; text-align: center; border: 4px solid transparent;
+  background: var(--qr-bg) padding-box; }
+.q-card img { display: block; width: 100%; aspect-ratio: 1; border-radius: 14px; image-rendering: pixelated; }
+.q-card .q-ph { width: 100%; aspect-ratio: 1; border-radius: 14px; display: grid; place-items: center; font-size: var(--text-small); color: var(--ink-3);
+  border: 2px dashed var(--line-strong); }
+.q-card b { display: block; margin-top: 14px; font-size: var(--text-name); color: var(--ink); }
+.q-card span { display: block; margin-top: 4px; font-size: var(--text-caption); color: var(--ink-2); }
+/* 深色结尾页右侧的二维码区（用 margin 定位，别用 transform，登场动画会覆盖 transform） */
+.chapter .end-qr { position: absolute; right: 130px; top: 50%; margin-top: -220px; }
+.q-night .q-card { width: 290px; padding: 18px 18px 14px; }
+.q-night .q-card b { font-size: var(--text-body); margin-top: 10px; }

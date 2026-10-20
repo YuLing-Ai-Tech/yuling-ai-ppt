@@ -1,0 +1,20 @@
+/* 通用组件 · 截图窗 */
+/* 截图窗：窗口框 + 标题栏 + 扫描光位置（配色在风格皮肤里） */
+.win { border-radius: var(--radius-panel); background: var(--surface); box-shadow: var(--shadow-lift); overflow: hidden; position: relative;
+  border: 1px solid var(--line); }
+.win .titlebar { height: 44px; display: flex; align-items: center; gap: var(--space-inline); padding: 0 18px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  font-size: var(--text-label); color: var(--ink-2); }
+.win .titlebar i { width: 14px; height: 14px; border-radius: 50%; }
+.win .titlebar i:nth-child(3) { margin-right: 12px; }
+.win img { display: block; width: 100%; }
+.win::after { content: ""; position: absolute; left: 0; right: 0; top: 44px; height: 120px; pointer-events: none;
+  opacity: 0; }
+.slide.active .win::after { animation: scanline 2.4s var(--ease) 1s 1 both; }
+@keyframes scanline { 0% { opacity: 1; transform: translateY(-120px); } 100% { opacity: 0; transform: translateY(720px); } }
+.win.tilt { transform: perspective(1800px) rotateY(calc(-10deg + var(--ry, 0deg))) rotateX(calc(4deg + var(--rx, 0deg)));
+  transition: transform 1s var(--ease); }
+.win.tilt.is-hover { transform: perspective(1800px) rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)); }
+/* 截图下方的彩色倒影光 */
+.glow-under { position: relative; }
+.glow-under::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -40px; height: 120px; border-radius: 50%;
+  background: var(--theme); filter: blur(60px); opacity: .45; z-index: -1; }

@@ -1,0 +1,8 @@
+/* 放映内核 · 7 秒定格与减弱动态 */
+/* 进场 7 秒后定格：页内所有循环动效停下（脚本加 .settled / .is-settled）。风格自己的背景层是否一起停，由风格声明 */
+.slide.settled *, .slide.settled *::before, .slide.settled *::after { animation-play-state: paused !important; }
+/* S 键切换 body.flow-paused（设计 §3.2）：各组件按 body.flow-paused 自行停自己的循环动画，内核不点名组件的类 */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

@@ -1,0 +1,10 @@
+/* 通用组件 · 点击揭示答案（Q-017 D6）：答案写成 <span class="answer" data-step="N">…</span>，复用放映内核的分步揭示。
+   没揭示时答案本身隐藏（runtime/steps.css），这里用 ::before 显示遮罩：默认是带"?"的色块；.answer.blank 是挖空（只留下划线）。
+   ::before 自己声明 visibility: visible，所以能在隐藏的答案上露出来；点遮罩由 answer.js 揭示到这一步 */
+.answer { position: relative; display: inline-block; min-width: 3em; padding: 0 .3em; text-align: center; }
+.slide .answer[data-step]:not(.step-shown)::before { content: "?"; visibility: visible; position: absolute; inset: 0 -.15em;
+  display: grid; place-items: center; border-radius: var(--radius-tag); background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; cursor: pointer; }
+.slide .answer.blank[data-step]:not(.step-shown)::before { content: ""; background: none; border-radius: 0; border-bottom: 3px solid var(--accent); }
+/* 不在当前页的遮罩不接收点击（它们的 visibility: visible 会让它们盖住当前页同一位置的元素） */
+.slide:not(.active) .answer[data-step]::before { pointer-events: none; }

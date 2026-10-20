@@ -1,0 +1,45 @@
+/* 苹果风 · 色板令牌 */
+:root {
+  --bg: #F5F5F7; --surface: #FFFFFF; --surface-2: #FAFAFC;
+  --ink: #1D1D1F; --ink-2: #6E6E73; --ink-3: #AEAEB2; --line: rgba(0, 0, 0, .08);
+  --accent: #0071E3; --accent-soft: rgba(0, 113, 227, .09); --accent-glow: rgba(0, 113, 227, .28);
+  --cyan: #32ADE6; --live: #34C759; --live-ink: #248A3D; --live-soft: rgba(52, 199, 89, .13);
+  --dev: #FF9500; --dev-ink: #C93400; --dev-soft: rgba(255, 149, 0, .13);
+  --planned: #5856D6; --planned-soft: rgba(88, 86, 214, .11);
+  --bad: #FF3B30; --bad-soft: rgba(255, 59, 48, .09);
+  --pink: #FF2D55; --orange: #FF9500; --yellow: #FFCC00; --green: #34C759; --teal: #30B0C7;
+  --indigo: #5856D6; --purple: #AF52DE; --red: #FF3B30;
+  /* 每一讲一组主题渐变，由 .slide[data-theme] 取用 */
+  --g-blue: linear-gradient(100deg, #0071E3, #32ADE6 35%, #5AC8FA 50%, #32ADE6 65%, #0071E3);
+  --g-sunset: linear-gradient(100deg, #FF2D55, #FF9500 35%, #FFCC00 50%, #FF9500 65%, #FF2D55);
+  --g-violet: linear-gradient(100deg, #5856D6, #AF52DE 35%, #FF2D55 50%, #AF52DE 65%, #5856D6);
+  --g-mint: linear-gradient(100deg, #34C759, #30B0C7 35%, #0071E3 50%, #30B0C7 65%, #34C759);
+  --g-fire: linear-gradient(100deg, #FF3B30, #FF9500 35%, #FFCC00 50%, #FF9500 65%, #FF3B30);
+  --theme: var(--g-blue); --theme-solid: var(--accent);
+  --night: #03060F; --night-ink: #F5F7FF; --night-ink-2: #8E9BB5;
+  --on-color: #fff; /* 彩色底（强调色、主题渐变）上的文字和图形 */
+  /* 组件配色令牌：通用组件只认这些名字，数值 = 苹果风原值 */
+  --on-color-soft: rgba(255, 255, 255, .9);
+  --glass-bg: rgba(255, 255, 255, .66); --glass-border: rgba(255, 255, 255, .9);
+  --panel-bg: rgba(255, 255, 255, .8); --table-bg: rgba(255, 255, 255, .78); --line-strong: rgba(0, 0, 0, .15);
+  --bad-line: rgba(255, 59, 48, .25); --live-line: rgba(52, 199, 89, .3); --qr-bg: #fff;
+  --code-bg: #1D1D1F; --code-ink: #F5F5F7; --code-comment: #8E8E93; --code-keyword: #5AC8FA; --code-string: #FFD60A; --code-ok: #30D158;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 18px 48px rgba(0, 0, 0, .08);
+  --shadow-lift: 0 2px 6px rgba(0, 0, 0, .06), 0 36px 80px rgba(0, 0, 0, .16);
+  /* 尺寸角色令牌：放映内核和通用组件只认这些名字，数值 = 苹果风原值 */
+  --text-label: 18px; --text-caption: 20px; --text-small: 22px; --text-body: 24px; --text-emphasis: 26px; --text-name: 28px;
+  --text-heading: 32px; --text-icon: 40px; --text-quote: 54px; --text-stat: 120px; --text-timer: 200px;
+  --space-inline: 10px; --space-stack: 22px; --space-grid-dense: 24px; --space-grid: 28px; --space-section: 36px; --space-split: 80px;
+  --radius-thumb: 16px; --radius-panel: 20px; --radius-block: 24px; --radius-card: 30px; --radius-pill: 999px;
+  /* 图元令牌（设计 §3.1）：五类连线色、流速（像素/秒，不带单位）、图区网格线、等宽字、聚焦时压暗的透明度 */
+  --flow-sync: #0071E3; --flow-async: #AF52DE; --flow-data: #34C759; --flow-human: #FF2D55; --flow-tele: #FF9500;
+  --flow-speed: 40; --grid-line: transparent; --mono: "SF Mono", Menlo, Consolas, monospace; --dim-opacity: .08;
+  /* 分类色（设计 §3.1）：图元色调 data-tone="1"～"8" 与数据图共用，映射到苹果风现有的 8 个鲜艳色 */
+  --cat-1: #0071E3; --cat-2: #FF9500; --cat-3: #34C759; --cat-4: #AF52DE; --cat-5: #FF2D55; --cat-6: #30B0C7; --cat-7: #FFCC00; --cat-8: #5856D6;
+  --text-tag: 15px; --radius-tag: 8px;
+  /* 苹果式指数缓出：起步快、收尾极柔 */
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}

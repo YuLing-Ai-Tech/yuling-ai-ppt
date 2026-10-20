@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+.pytest_cache/
+.venv/
+build/
+*.regress.html
+
+# Historical and machine-specific visual baselines are not committed by default.
+baselines/**/*.png
+!baselines/图元样板/*.png

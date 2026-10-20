@@ -1,0 +1,14 @@
+/* 通用组件 · 图元拖动（Q-017 D2 形态 A）：拖动模式下可拖的盒子显示抓手、关掉触摸的默认手势；"拖动"按钮平时隐藏 */
+body.drag-on .slide.active .dg > .dg-part[data-id] { cursor: grab; touch-action: none; user-select: none; }
+body.drag-on .slide.active .dg > .dg-part.is-dragging { cursor: grabbing; }
+#drag-toggle { position: absolute; top: 92px; right: 32px; z-index: 45; padding: 10px 22px; border-radius: var(--radius-pill);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); cursor: pointer;
+  font: 600 var(--text-caption) var(--font); opacity: 0; visibility: hidden; transition: opacity .4s var(--ease), visibility .4s; }
+body.drag-button-shown #drag-toggle, body.drag-on #drag-toggle { opacity: 1; visibility: visible; }
+body.drag-on #drag-toggle { background: var(--accent); color: var(--on-color); border-color: transparent; }
+
+/* 形态 B："保存位置"按钮在拖动模式下、拖过东西之后才出现 */
+#drag-save { position: absolute; top: 152px; right: 32px; z-index: 45; padding: 10px 22px; border-radius: var(--radius-pill);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); cursor: pointer;
+  font: 600 var(--text-caption) var(--font); visibility: hidden; }
+body.drag-on.drag-has-moves #drag-save { visibility: visible; }

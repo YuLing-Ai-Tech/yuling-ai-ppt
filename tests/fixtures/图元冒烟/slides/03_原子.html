@@ -1,0 +1,21 @@
+<section class="slide" data-section="图元冒烟">
+  <div class="eyebrow">图元冒烟 · 第 3 页</div>
+  <h2>形状、泳道、图例、时间轴、象限</h2>
+  <div class="dg" data-grid="24 12">
+    <div class="legend" data-at="12 0 12 0.8" data-kinds="sync data:写库"></div>
+    <section class="lane" data-id="lane" data-at="0 1 11 3" data-tone="2"><b>泳道</b></section>
+    <div class="node" data-id="start" data-in="lane" data-shape="pill" data-at="1.3 0.7 3 1.6"><b>开始</b></div>
+    <div class="node" data-id="judge" data-in="lane" data-shape="diamond" data-at="6 0.2 3.4 2.6"><b>判断</b></div>
+    <div class="node" data-id="hub" data-shape="circle" data-at="0.5 5 2.8 3.6"><b>中心</b></div>
+    <div class="axis" data-id="time" data-at="0.5 10 10 1" data-ticks="Q1|Q2|Q3|Q4"></div>
+    <section class="quadrant" data-id="matrix" data-at="13 1.5 10.5 10" data-x="难度 →" data-y="↑ 价值"></section>
+    <div class="node" data-id="dot" data-in="matrix" data-shape="circle" data-at="1 1 1.2 1.2"></div>
+    <section class="zone" data-id="cage" data-at="5.5 6 5.5 3" data-tone="5"><div class="tab">CAGE<span>翻牌</span></div></section>
+    <div class="node" data-id="src" data-at="3.5 5.5 1.5 1"><b>源</b></div>
+    <div class="node" data-id="dst" data-at="11.5 5.5 1.4 1"><b>宿</b></div>
+    <i class="edge" data-from="start" data-to="judge"></i>
+    <i class="edge" data-from="src" data-to="dst"></i>
+    <i class="edge" data-from="hub" data-to="judge:b" data-kind="data" data-route="curve" data-end="dot" data-start="diamond"></i>
+  </div>
+  <p class="dg-caption">Fig. 3　冒烟用，不是真实数据</p>
+</section>

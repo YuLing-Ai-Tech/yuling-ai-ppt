@@ -1,0 +1,38 @@
+/* 通用组件 · 韦恩图（Q-017 D6）：.venn[data-sets="2|3"]；圈 .set 按出现顺序是 A、B（、C），圈里的 <b> 是集合名；
+   区域文字 .region[data-region="a|b|c|ab|ac|bc|abc"]（字母 = 它属于哪几个圈）。圈和区域都可以写 data-step 分步揭示。
+   2 圈盒子 16:10，圈直径 = 盒高的 90%，圆心 32% / 68%；3 圈盒子 1:1，圈直径 60%，圆心是边长 0.3 的正三角形（重心在正中）。
+   区域文字的位置按这套几何算好（tests/test_venn.py 逐个核对它落在且只落在该落的圈里）；三圈的交集区窄，区域文字宜在 5 个字以内 */
+.venn { position: relative; flex: 1; min-height: 0; align-self: center; aspect-ratio: 16 / 10; }
+.venn[data-sets="3"] { aspect-ratio: 1; }
+.venn .set { position: absolute; border-radius: 50%; --tone: var(--cat-1); }
+.venn .set:nth-of-type(2) { --tone: var(--cat-2); }
+.venn .set:nth-of-type(3) { --tone: var(--cat-3); }
+.venn .set::before, .venn .set::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.venn .set::before { background: var(--tone); opacity: .14; }
+.venn .set::after { border: 2px solid var(--tone); opacity: .6; }
+.venn .set > b { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: var(--text-name); color: var(--tone); }
+.venn .region { position: absolute; transform: translate(-50%, -50%); text-align: center; font-size: var(--text-caption); color: var(--ink); }
+
+.venn[data-sets="2"] .set { top: 5%; width: 56.25%; height: 90%; }
+.venn[data-sets="2"] .set:nth-of-type(1) { left: 3.875%; }
+.venn[data-sets="2"] .set:nth-of-type(2) { left: 39.875%; }
+.venn[data-sets="2"] .set:nth-of-type(1) > b { left: 30%; top: 20%; }
+.venn[data-sets="2"] .set:nth-of-type(2) > b { left: 70%; top: 20%; }
+.venn[data-sets="2"] [data-region="a"] { left: 20%; top: 50%; }
+.venn[data-sets="2"] [data-region="ab"] { left: 50%; top: 50%; }
+.venn[data-sets="2"] [data-region="b"] { left: 80%; top: 50%; }
+
+.venn[data-sets="3"] .set { width: 60%; height: 60%; }
+.venn[data-sets="3"] .set:nth-of-type(1) { left: 20%; top: 2.68%; }
+.venn[data-sets="3"] .set:nth-of-type(2) { left: 5%; top: 28.66%; }
+.venn[data-sets="3"] .set:nth-of-type(3) { left: 35%; top: 28.66%; }
+.venn[data-sets="3"] .set:nth-of-type(1) > b { left: 50%; top: 16%; }
+.venn[data-sets="3"] .set:nth-of-type(2) > b { left: 30%; top: 80%; }
+.venn[data-sets="3"] .set:nth-of-type(3) > b { left: 70%; top: 80%; }
+.venn[data-sets="3"] [data-region="a"] { left: 50%; top: 20.5%; }
+.venn[data-sets="3"] [data-region="b"] { left: 23.7%; top: 65.2%; }
+.venn[data-sets="3"] [data-region="c"] { left: 76.3%; top: 65.2%; }
+.venn[data-sets="3"] [data-region="ab"] { left: 32.7%; top: 40%; }
+.venn[data-sets="3"] [data-region="ac"] { left: 67.3%; top: 40%; }
+.venn[data-sets="3"] [data-region="bc"] { left: 50%; top: 70%; }
+.venn[data-sets="3"] [data-region="abc"] { left: 50%; top: 50%; }

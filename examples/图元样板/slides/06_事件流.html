@@ -1,0 +1,21 @@
+<section class="slide" data-section="事件流">
+  <div class="eyebrow">图种 6 / 9 · 事件流</div>
+  <h2>下单之后：一条事件，多方订阅</h2>
+  <div class="dg" data-grid="24 12">
+    <div class="legend" data-at="12 0 12 0.8" data-kinds="sync async:事件 data:写入"></div>
+    <div class="node" data-id="order" data-at="0.3 1.6 4.4 1.9" data-icon="OD"><b>订单服务</b><small>下单成功</small></div>
+    <div class="node" data-id="pay" data-at="0.3 5.05 4.4 1.9" data-icon="PAY"><b>支付服务</b><small>支付回调</small></div>
+    <div class="node" data-id="stock" data-at="0.3 8.5 4.4 1.9" data-icon="INV"><b>库存服务</b><small>扣减</small></div>
+    <div class="node" data-id="bus" data-at="8.3 4.2 3.4 3.6" data-icon="BUS" data-tone="4" data-flow data-step="1"><b>事件总线</b><small>Kafka</small></div>
+    <div class="node" data-id="notify" data-at="15.3 1.6 4.4 1.9" data-icon="NT" data-step="2"><b>通知</b><small>短信 · 推送</small></div>
+    <div class="node" data-id="points" data-at="15.3 5.05 4.4 1.9" data-icon="PT" data-step="2"><b>积分</b><small>加积分</small></div>
+    <div class="node" data-id="dw" data-at="15.3 8.5 4.4 1.9" data-icon="DW" data-step="2"><b>数据仓库</b><small>实时报表</small></div>
+    <i class="edge" data-from="order:r" data-to="bus:t" data-kind="async" data-flow="packet" data-label="OrderPaid"></i>
+    <i class="edge" data-from="pay:r" data-to="bus:l" data-kind="async" data-flow="packet"></i>
+    <i class="edge" data-from="stock:r" data-to="bus:b" data-kind="async" data-flow="packet"></i>
+    <i class="edge" data-from="bus" data-to="notify" data-kind="async" data-flow="packet"></i>
+    <i class="edge" data-from="bus" data-to="points" data-kind="async" data-flow="packet"></i>
+    <i class="edge" data-from="bus" data-to="dw" data-kind="data" data-flow="packet"></i>
+    <i class="edge" data-from="dw:r" data-to="notify:r" data-via="22.6,6" data-line="dashed" data-label="补发"></i>
+  </div>
+</section>

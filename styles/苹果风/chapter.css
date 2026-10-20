@@ -1,0 +1,28 @@
+/* 苹果风 · 深色章节页与封面 */
+/* ===== 深色章节页 ===== */
+.chapter .num { font-size: 300px; font-weight: 900; line-height: .85; letter-spacing: -.05em; background: var(--theme); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: grad-slide 6s linear infinite;
+  filter: drop-shadow(0 0 60px color-mix(in srgb, var(--theme-solid) 45%, transparent)); }
+.chapter h1 { font-size: 128px; margin-top: 18px; perspective: 1200px; }
+.chapter h1 .ch { display: inline-block; opacity: 0; }
+.slide.chapter.active h1 .ch { animation: ch-in 1.2s var(--ease) both; animation-delay: calc(var(--c) * 60ms + 600ms); }
+@keyframes ch-in { from { opacity: 0; transform: translateY(80px) rotateX(-90deg) scale(.8); filter: blur(14px); } to { opacity: 1; transform: none; filter: none; } }
+.chapter .lead { margin-top: 30px; font-size: 36px; }
+.chapter .meta { margin-top: 50px; }
+.chapter .meta span { font-size: 22px; padding: 10px 22px; border-radius: 999px; border: 1px solid rgba(140, 190, 255, .3); color: var(--night-ink-2);
+  backdrop-filter: blur(10px); background: rgba(255, 255, 255, .04); }
+.chapter .orb { position: absolute; right: 150px; top: 50%; width: 520px; height: 520px; margin-top: -300px; }
+.chapter .orb i { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent;
+  background: var(--theme) border-box; -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask-composite: exclude; animation: spin 18s linear infinite; opacity: .8; }
+.chapter .orb i:nth-child(2) { inset: 70px; animation-duration: 12s; animation-direction: reverse; opacity: .6; }
+.chapter .orb i:nth-child(3) { inset: 150px; animation-duration: 8s; opacity: .5; }
+.chapter .orb em { position: absolute; inset: 210px; border-radius: 50%; background: var(--theme); filter: blur(4px);
+  box-shadow: 0 0 120px 30px rgba(90, 200, 250, .35); animation: orb-pulse 3.2s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes orb-pulse { 50% { transform: scale(.82); opacity: .75; } }
+
+/* 封面 */
+.slide.cover h1 { font-size: 120px; }
+.cover .who { margin-top: 70px; font-size: 32px; font-weight: 600; }
+.cover .who span { font-weight: 500; margin-left: 20px; font-size: 26px; }

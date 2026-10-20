@@ -1,0 +1,31 @@
+<section class="slide" data-section="分层架构">
+  <div class="eyebrow">图种 1 / 9 · 分层架构</div>
+  <h2>电商平台的四层结构</h2>
+  <div class="dg" data-grid="24 12">
+    <section class="lane" data-id="l1" data-at="0 0 24 2.7" data-tone="1" data-step="1"><b>展示层</b></section>
+    <section class="lane" data-id="l2" data-at="0 3 24 2.7" data-tone="2" data-step="2"><b>服务层</b></section>
+    <section class="lane" data-id="l3" data-at="0 6 24 2.7" data-tone="3" data-step="3"><b>数据层</b></section>
+    <section class="lane" data-id="l4" data-at="0 9 24 2.7" data-tone="4" data-step="4"><b>基础设施</b></section>
+    <div class="node" data-id="web" data-in="l1" data-at="1.5 0.45 4.2 1.8" data-icon="WEB"><b>网页商城</b><small>Vue · SSR</small></div>
+    <div class="node" data-id="app" data-in="l1" data-at="7.2 0.45 4.2 1.8" data-icon="APP"><b>移动端</b><small>iOS · 安卓</small></div>
+    <div class="node" data-id="mini" data-in="l1" data-at="12.9 0.45 4.2 1.8" data-icon="MP"><b>小程序</b><small>微信</small></div>
+    <div class="node" data-id="ops" data-in="l1" data-at="18.6 0.45 4.2 1.8" data-icon="OPS"><b>运营后台</b><small>内部</small></div>
+    <div class="node" data-id="gw" data-in="l2" data-at="1.5 0.45 4.2 1.8" data-icon="GW"><b>API 网关</b><small>鉴权 · 限流</small></div>
+    <div class="node" data-id="order" data-in="l2" data-at="7.2 0.45 4.2 1.8" data-icon="OD"><b>订单服务</b><small>下单 · 退款</small></div>
+    <div class="node" data-id="goods" data-in="l2" data-at="12.9 0.45 4.2 1.8" data-icon="GD"><b>商品服务</b><small>类目 · 库存</small></div>
+    <div class="node" data-id="notice" data-in="l2" data-at="18.6 0.45 4.2 1.8" data-icon="NT"><b>通知服务</b><small>短信 · 推送</small></div>
+    <div class="node" data-id="oss" data-in="l3" data-at="1.5 0.45 4.2 1.8" data-icon="OSS"><b>对象存储</b><small>图片 · 附件</small></div>
+    <div class="node" data-id="mysql" data-in="l3" data-at="7.2 0.45 4.2 1.8" data-icon="DB"><b>MySQL</b><small>主从</small></div>
+    <div class="node" data-id="redis" data-in="l3" data-at="12.9 0.45 4.2 1.8" data-icon="KV"><b>Redis</b><small>缓存</small></div>
+    <div class="node" data-id="mq" data-in="l3" data-at="18.6 0.45 4.2 1.8" data-icon="MQ"><b>消息队列</b><small>RocketMQ</small></div>
+    <div class="node" data-id="k8s" data-in="l4" data-at="1.5 0.45 6.5 1.8" data-icon="K8S"><b>容器平台</b><small>Kubernetes</small></div>
+    <div class="node" data-id="obs" data-in="l4" data-at="9.6 0.45 6.5 1.8" data-icon="OBS"><b>监控告警</b><small>Prometheus</small></div>
+    <div class="node" data-id="cloud" data-in="l4" data-at="17.7 0.45 5.1 1.8" data-icon="IAAS"><b>云主机</b><small>华东 1</small></div>
+    <i class="edge" data-from="web" data-to="gw"></i>
+    <i class="edge" data-from="gw" data-to="order"></i>
+    <i class="edge" data-from="order" data-to="goods"></i>
+    <i class="edge" data-from="order" data-to="mysql" data-kind="data"></i>
+    <i class="edge" data-from="goods" data-to="redis" data-kind="data"></i>
+    <i class="edge" data-from="notice" data-to="mq" data-kind="async"></i>
+  </div>
+</section>

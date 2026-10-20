@@ -1,0 +1,15 @@
+/* 通用组件 · 阶梯 */
+/* 阶梯：逐级升起 */
+.ladder { display: flex; align-items: flex-end; gap: var(--space-stack); height: 560px; }
+.ladder .step { flex: 1; border-radius: var(--radius-block) var(--radius-block) 12px 12px; padding: 26px 24px; color: var(--on-color); position: relative;
+  transform-origin: bottom; }
+.ladder .step { background: var(--theme); }
+.ladder .step b { display: block; font-size: 30px; margin-bottom: 8px; } .ladder .step span { font-size: var(--text-caption); line-height: 1.5; opacity: .92; }
+.ladder .step em { position: absolute; top: -52px; left: 24px; font-style: normal; font-size: 40px; font-weight: 900; color: var(--ink-3); }
+.ladder .step:nth-child(1) { height: 36%; }
+.ladder .step:nth-child(2) { height: 52%; }
+.ladder .step:nth-child(3) { height: 68%; }
+.ladder .step:nth-child(4) { height: 84%; }
+.ladder .step:nth-child(5) { height: 100%; }
+.slide.active .ladder .step { animation: rise-bar .9s var(--spring) both; animation-delay: calc(var(--d, 0) * 220ms + 400ms); }
+@keyframes rise-bar { from { transform: scaleY(0); opacity: 0; } to { transform: none; opacity: 1; } }

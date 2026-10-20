@@ -1,0 +1,10 @@
+<section class="slide" data-section="连线检查">
+  <h2>三处引用错误</h2>
+  <div class="dg" data-grid="24 12">
+    <section class="zone" data-id="vpc" data-at="1 1 10 8"></section>
+    <div class="node" data-id="api" data-in="vpc" data-at="1 1 4 2"><b>API</b></div>
+    <div class="node" data-id="api" data-in="vpc" data-at="1 4 4 2"><b>重名</b></div>
+    <div class="node" data-id="cache" data-in="vcp" data-at="1 1 4 2"><b>父容器写错</b></div>
+    <i class="edge" data-from="api:r" data-to="dbx"></i>
+  </div>
+</section>

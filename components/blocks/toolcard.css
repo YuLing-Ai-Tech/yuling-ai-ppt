@@ -1,0 +1,7 @@
+/* 通用组件 · 工具速览卡 */
+/* 工具速览卡：小截图 + 名字 + 一句话 */
+.toolcard { display: flex; flex-direction: column; gap: 12px; }
+.toolcard .thumb { border-radius: var(--radius-thumb); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); aspect-ratio: 16 / 10; }
+.toolcard .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 1.2s var(--ease); }
+.toolcard:hover .thumb img { transform: scale(1.06); }
+.toolcard b { font-size: var(--text-name); } .toolcard span { font-size: var(--text-caption); color: var(--ink-2); line-height: 1.5; }

@@ -1,0 +1,57 @@
+/* 通用组件 · 数据图（设计 §5）：盒子和图元一样占满剩余高度；颜色按组走 --cat-N（借用图元的局部变量 --tone）；
+   柱子从基线长出、折线描出来、环形扇区依次展开、KPI 数字滚动，都在 6 秒内做完 */
+.chart { position: relative; flex: 1; min-height: 0; margin: 0; }
+.chart > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.chart [data-tone="1"] { --tone: var(--cat-1); } .chart [data-tone="2"] { --tone: var(--cat-2); }
+.chart [data-tone="3"] { --tone: var(--cat-3); } .chart [data-tone="4"] { --tone: var(--cat-4); }
+.chart [data-tone="5"] { --tone: var(--cat-5); } .chart [data-tone="6"] { --tone: var(--cat-6); }
+.chart [data-tone="7"] { --tone: var(--cat-7); } .chart [data-tone="8"] { --tone: var(--cat-8); }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .tick-label, .chart .cat-label { fill: var(--ink-2); font-size: var(--text-tag); font-family: var(--font); }
+.chart .cat-label { font-size: var(--text-caption); }
+.chart .value-label { fill: var(--ink); font-size: var(--text-caption); font-weight: 600; font-family: var(--font); }
+.chart .center-label { fill: var(--ink); font-size: var(--text-name); font-weight: 700; font-family: var(--font); }
+.chart .swatch { fill: var(--tone); }
+.chart .bar { fill: var(--tone); transform-box: fill-box; transform-origin: 50% 100%; }
+.chart .bar.negative { transform-origin: 50% 0; }
+.chart .line { fill: none; stroke: var(--tone); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: var(--len); }
+.chart .dot { fill: var(--surface); stroke: var(--tone); stroke-width: 3; }
+.chart .slice { fill: none; stroke: var(--tone); transform-box: fill-box; transform-origin: center; transform: rotate(-90deg); }
+.chart .ring-track { fill: none; stroke: var(--line); }
+.chart .funnel-stage, .chart .ranking-bar, .chart .matrix-point { fill: var(--tone); }
+.chart .funnel-stage { opacity: .9; }
+.chart .funnel-label, .chart .funnel-value { fill: var(--surface); font-family: var(--font); font-weight: 700; }
+.chart .funnel-label { font-size: var(--text-body); }
+.chart .funnel-value { font-size: var(--text-caption); opacity: .88; }
+.chart .matrix-quadrant { fill: var(--tone); opacity: .08; }
+.chart .matrix-axis { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 7 6; opacity: .55; }
+.chart .matrix-quadrant-label { fill: var(--ink-2); font-family: var(--font); font-size: var(--text-caption); font-weight: 700; }
+.chart .matrix-point { stroke: var(--surface); stroke-width: 4; }
+.chart .matrix-point-label, .chart .ranking-label, .chart .ranking-value { fill: var(--ink); font-family: var(--font); font-size: var(--text-caption); font-weight: 700; }
+.chart .scatter-reference { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 9 7; opacity: .65; }
+.chart .scatter-point { fill: var(--tone); stroke: var(--surface); stroke-width: 4; transform-box: fill-box; transform-origin: center; }
+.chart .scatter-label, .chart .radar-label, .chart .heatmap-label, .chart .heatmap-value { fill: var(--ink); font-family: var(--font); font-size: var(--text-tag); font-weight: 650; }
+.chart .radar-grid { fill: none; stroke: var(--line); stroke-width: 2; }
+.chart .radar-series { fill: var(--tone); fill-opacity: .2; stroke: var(--tone); stroke-width: 4; stroke-linejoin: round; transform-box: fill-box; transform-origin: center; }
+.chart .stack-segment { fill: var(--tone); transform-box: fill-box; transform-origin: 50% 100%; }
+.chart .heatmap-cell { fill: var(--tone); transform-box: fill-box; transform-origin: center; }
+.chart .heatmap-value { font-size: var(--text-caption); }
+.chart .kpi-value { position: absolute; inset: 0; display: grid; place-items: center; font-size: var(--text-stat); font-weight: 700; color: var(--ink); }
+.chart .kpi-label { position: absolute; left: 0; right: 0; top: 66%; text-align: center; font-size: var(--text-body); color: var(--ink-2); }
+.slide.active .chart .bar { animation: chart-grow .9s var(--ease) var(--delay, 0s) both; }
+.slide.active .chart .value-label, .slide.active .chart .dot { animation: chart-fade .4s linear calc(var(--delay, 0s) + .7s) both; }
+.slide.active .chart .line { animation: chart-draw 1.4s var(--ease) var(--delay, 0s) both; }
+.slide.active .chart .slice { animation: chart-sweep 1s var(--ease) var(--delay, 0s) both; }
+.slide.active .chart .funnel-stage, .slide.active .chart .ranking-bar { animation: chart-grow-x .8s var(--ease) var(--delay, 0s) both; transform-box: fill-box; transform-origin: left center; }
+.slide.active .chart .scatter-point { animation: chart-pop .55s var(--spring) var(--delay, 0s) both; }
+.slide.active .chart .radar-series { animation: radar-sweep .9s var(--ease) var(--delay, 0s) both; }
+.slide.active .chart .stack-segment { animation: chart-grow .8s var(--ease) var(--delay, 0s) both; }
+.slide.active .chart .heatmap-cell { animation: heatmap-reveal .55s var(--ease) var(--delay, 0s) both; }
+@keyframes chart-grow { from { transform: scaleY(0); } }
+@keyframes chart-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes chart-sweep { from { stroke-dasharray: 0 100; } }
+@keyframes chart-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes chart-grow-x { from { transform: scaleX(0); opacity: .35; } }
+@keyframes chart-pop { from { transform: scale(0); opacity: 0; } }
+@keyframes radar-sweep { from { transform: scale(.2); opacity: 0; } }
+@keyframes heatmap-reveal { from { transform: scale(.72); opacity: 0; } }

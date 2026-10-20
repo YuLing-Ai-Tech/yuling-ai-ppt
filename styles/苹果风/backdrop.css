@@ -1,0 +1,37 @@
+/* 苹果风 · 极光、夜空、粒子画布、光幕 */
+/* 浅色页背景：细网格 + 缓慢流动的彩色极光 */
+#backdrop { position: absolute; inset: 0; pointer-events: none; transition: opacity 1.2s var(--ease-io); }
+#backdrop::before { content: ""; position: absolute; inset: 0; z-index: 1;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px; mask-image: radial-gradient(ellipse at center, #000 15%, transparent 75%); opacity: .5; }
+#backdrop i { position: absolute; border-radius: 50%; filter: blur(110px); opacity: .5; mix-blend-mode: multiply;
+  animation: aurora 30s var(--ease-io) infinite alternate; }
+#backdrop i:nth-child(1) { width: 1000px; height: 800px; background: #7CC4FF; left: -300px; top: -360px; }
+#backdrop i:nth-child(2) { width: 900px; height: 900px; background: #D9A6FF; right: -320px; bottom: -420px; animation-duration: 36s; animation-delay: -8s; }
+#backdrop i:nth-child(3) { width: 700px; height: 600px; background: #FFC2D4; left: 38%; top: 55%; animation-duration: 26s; animation-delay: -14s; }
+#backdrop i:nth-child(4) { width: 600px; height: 500px; background: #FFE3A3; left: 60%; top: -260px; animation-duration: 40s; animation-delay: -4s; }
+@keyframes aurora { 0% { transform: translate(0, 0) scale(1) rotate(0); } 50% { transform: translate(220px, 140px) scale(1.25) rotate(40deg); }
+  100% { transform: translate(-120px, 200px) scale(.9) rotate(-30deg); } }
+
+/* 深色章节页：极光 + 粒子网络 + 跟随鼠标的聚光灯 */
+#nightsky { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 1.2s var(--ease-io); overflow: hidden; }
+#nightsky i { position: absolute; border-radius: 50%; filter: blur(120px); opacity: .55; animation: aurora 24s var(--ease-io) infinite alternate; }
+#nightsky i:nth-child(1) { width: 1100px; height: 700px; background: var(--c1, #0A84FF); left: -300px; top: -250px; }
+#nightsky i:nth-child(2) { width: 900px; height: 800px; background: var(--c2, #BF5AF2); right: -250px; bottom: -350px; animation-delay: -10s; }
+#nightsky i:nth-child(3) { width: 700px; height: 600px; background: var(--c3, #FF375F); left: 40%; top: 30%; opacity: .3; animation-delay: -5s; }
+#nightsky::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(600px circle at var(--sx, 50%) var(--sy, 50%), rgba(255, 255, 255, .08), transparent 60%); }
+#particles { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease-io); pointer-events: none; }
+body.is-night #nightsky, body.is-night #particles { opacity: 1; }
+body.is-night #backdrop { opacity: 0; }
+
+/* 进入章节页时横扫全屏的彩色光幕 */
+#wipe { position: absolute; inset: -10% -40%; z-index: 30; pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(90, 200, 250, .55) 42%, rgba(191, 90, 242, .6) 50%, rgba(255, 55, 95, .55) 58%, transparent 70%);
+  filter: blur(30px); transform: translateX(-100%); }
+#wipe.run { animation: wipe 1.3s var(--ease-io) both; }
+@keyframes wipe { 0% { opacity: 1; transform: translateX(-100%) skewX(-12deg); } 100% { opacity: 1; transform: translateX(100%) skewX(-12deg); } }
+
+
+/* 定格后极光和夜空一起停（脚本在 body 上加 .is-settled） */
+body.is-settled #backdrop i, body.is-settled #nightsky i { animation-play-state: paused !important; }

@@ -1,0 +1,6 @@
+/* 通用组件 · 版式：深色章节页与封面的结构（深色底由内核按 body.is-night 切换，文字用夜色令牌；观感在风格里） */
+.slide.chapter { color: var(--night-ink); justify-content: center; }
+.chapter .eyebrow { color: var(--night-ink-2); }
+.chapter .lead { color: var(--night-ink-2); }
+.chapter .meta { display: flex; gap: 18px; }
+.cover .who span { color: var(--night-ink-2); }

@@ -1,0 +1,11 @@
+/* 通用组件 · 版式：左文右图 */
+/* 版式：左文右图 */
+.split { display: grid; grid-template-columns: 1fr 1.12fr; gap: var(--space-split); align-items: center; }
+.split.even { grid-template-columns: 1fr 1fr; }
+.split.wide-right { grid-template-columns: .8fr 1.3fr; }
+.stack { display: flex; flex-direction: column; gap: var(--space-stack); }
+.row { display: flex; gap: var(--space-grid); align-items: stretch; }
+.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-grid); }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-grid); }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-grid-dense); }
+.mt { margin-top: 36px; }

@@ -1,0 +1,40 @@
+/* 通用组件 · 图元原子：节点形状、泳道 / 层带、图例、图注、时间轴、象限坐标（设计 §4.4） */
+/* 节点形状：data-shape="pill"（起止）、"circle"（中心、人物、时间点）、"diamond"（判断）；不写就是图标卡 */
+.dg .node[data-shape] { justify-content: center; text-align: center; padding: 0; }
+.dg .node[data-shape="pill"] { border-radius: var(--radius-pill); }
+.dg .node[data-shape="circle"] { border-radius: 50%; }
+.dg .node[data-shape="pill"]::before, .dg .node[data-shape="circle"]::before { display: none; }
+.dg .node[data-shape="diamond"] { background: none; border: none; box-shadow: none; }
+.dg .node[data-shape="diamond"]::before, .dg .node[data-shape="diamond"]::after { content: ""; position: absolute; inset: 0; width: auto; z-index: -1;
+  border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.dg .node[data-shape="diamond"]::before { background: var(--tone); }
+.dg .node[data-shape="diamond"]::after { inset: 2px; background: var(--surface); }
+
+/* 泳道 / 层带：左侧竖排标题 + 淡色长条；和容器一样用 data-in 装节点，节点从第 1 列往后放，让开标题 */
+.dg .lane { border-radius: var(--radius-thumb); }
+.dg .lane::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--tone); opacity: .07; pointer-events: none; }
+.dg .lane > b { position: absolute; left: 0; top: 0; bottom: 0; width: var(--cell-w); display: flex; align-items: center; justify-content: center;
+  writing-mode: vertical-rl; letter-spacing: .2em; font-size: var(--text-caption); color: var(--tone); border-right: 1px dashed var(--tone); }
+
+/* 图例：data-kinds 列出的连线类型，线色跟连线一样 */
+.dg .legend { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-grid); z-index: 30;
+  font-size: var(--text-tag); color: var(--ink-2); }
+.dg .legend i { display: inline-block; width: 30px; margin-right: var(--space-inline); vertical-align: middle; border-top: 3px solid var(--kind-color); }
+
+/* 图注：写在 .dg 后面的 <p class="dg-caption"> */
+.dg-caption { margin-top: var(--space-inline); font: 500 var(--text-tag) var(--mono); color: var(--ink-3); }
+
+/* 时间轴：盒子上沿是轴线，刻度和刻度名往下排 */
+.dg .axis { border-top: 2px solid var(--line-strong); }
+.dg .axis .tick { position: absolute; top: 0; transform: translateX(-50%); padding-top: 16px; white-space: nowrap;
+  font: 600 var(--text-tag) var(--mono); color: var(--ink-2); }
+.dg .axis .tick::before { content: ""; position: absolute; left: 50%; top: -8px; width: 2px; height: 14px; margin-left: -1px; background: var(--line-strong); }
+
+/* 象限坐标：十字轴 + 两条轴的名字；四个象限用容器（data-in 指向它）来画 */
+.dg .quadrant::before, .dg .quadrant::after { content: ""; position: absolute; z-index: 1; background: var(--line-strong); pointer-events: none; }
+.dg .quadrant::before { left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; }
+.dg .quadrant::after { top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; }
+.dg .quadrant .axis-title { position: absolute; z-index: 1; white-space: nowrap; font: 600 var(--text-tag) var(--mono); color: var(--ink-2);
+  background: var(--surface); padding: 2px 8px; border-radius: var(--radius-tag); }
+.dg .quadrant .axis-x { right: 0; top: 50%; transform: translateY(-50%); }
+.dg .quadrant .axis-y { left: 50%; top: 0; transform: translateX(-50%); }

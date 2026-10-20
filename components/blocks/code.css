@@ -1,0 +1,5 @@
+/* 通用组件 · 代码/命令块 */
+/* 代码/命令块 */
+.code { font: 500 var(--text-small)/1.6 var(--mono); background: var(--code-bg); color: var(--code-ink); border-radius: var(--radius-panel); padding: 26px 30px;
+  box-shadow: var(--shadow-lift); white-space: pre-wrap; }
+.code .c { color: var(--code-comment); } .code .k { color: var(--code-keyword); } .code .s { color: var(--code-string); } .code .g { color: var(--code-ok); }

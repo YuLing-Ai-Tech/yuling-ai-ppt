@@ -1,0 +1,46 @@
+/* 通用组件 · 图元连线：底线描出 → 端点淡入 → 线上标签；五类连线的颜色走 --flow-* 令牌 */
+.dg [data-kind="sync"], .dg-defs [data-kind="sync"] { --kind-color: var(--flow-sync); }
+.dg [data-kind="async"], .dg-defs [data-kind="async"] { --kind-color: var(--flow-async); }
+.dg [data-kind="data"], .dg-defs [data-kind="data"] { --kind-color: var(--flow-data); }
+.dg [data-kind="human"], .dg-defs [data-kind="human"] { --kind-color: var(--flow-human); }
+.dg [data-kind="tele"], .dg-defs [data-kind="tele"] { --kind-color: var(--flow-tele); }
+.dg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.dg-defs marker path { fill: var(--kind-color); }
+
+.dg-wires { position: absolute; inset: 0; z-index: 10; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.dg .wire { fill: none; stroke: var(--kind-color); stroke-width: 1.8; stroke-opacity: .55; stroke-linejoin: round; }
+.dg .wire[data-line="bold"] { stroke-width: 3.2; stroke-opacity: .8; }
+.dg .wire[data-line="dashed"] { stroke-dasharray: 7 6; }
+.dg .tip { fill: none; stroke: none; }
+.slide.active .dg .wire { stroke-dasharray: var(--len); animation: dg-draw .9s var(--ease) calc(var(--step-delay, 0s) + var(--delay, 0s)) both; }
+.slide.active .dg .wire[data-line="dashed"] { stroke-dasharray: 7 6; animation-name: dg-fade; }
+.slide.active .dg .tip { animation: dg-fade .3s linear calc(var(--step-delay, 0s) + var(--delay, 0s) + .8s) both; }
+@keyframes dg-draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes dg-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.dg-packets { position: absolute; inset: 0; z-index: 15; pointer-events: none; }
+.dg-labels { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
+.dg .dg-label { position: absolute; transform: translate(-50%, -50%); padding: 2px 8px; border-radius: var(--radius-tag); white-space: nowrap;
+  font: 600 var(--text-tag) var(--mono); color: var(--kind-color); background: var(--surface); border: 1px solid var(--line); }
+.slide.active .dg .dg-label { animation: dg-fade .4s linear calc(var(--step-delay, 0s) + var(--delay, 0s) + .8s) both; }
+
+/* 流动（设计 §3.2）：只用 CSS 动画，回归能冻结；速度走令牌 --flow-speed（像素/秒，不带单位） */
+.dg .flowline { fill: none; stroke: var(--kind-color); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 3 11; opacity: 0; }
+.dg .flowline[data-kind="async"] { stroke-dasharray: 2 12; stroke-width: 2.4; }
+.dg .flowline[data-kind="data"] { stroke-dasharray: 6 8; }
+.dg .flowline[data-kind="tele"] { stroke-dasharray: 2 8; stroke-width: 1.5; }
+.slide.active .dg .flowline { animation: dg-fade .5s linear calc(var(--step-delay, 0s) + var(--delay, 0s) + .7s) both,
+  dg-dash calc(140s / var(--flow-speed)) linear infinite; }
+@keyframes dg-dash { to { stroke-dashoffset: -140; } }
+.dg .packet { position: absolute; left: 0; top: 0; width: 14px; height: 4px; border-radius: var(--radius-pill); opacity: 0;
+  background: var(--kind-color); box-shadow: 0 0 10px 2px var(--kind-color); offset-rotate: auto; }
+.slide.active .dg .packet { animation: dg-fade .4s linear calc(var(--step-delay, 0s) + var(--delay, 0s) + .9s) both,
+  dg-run calc(var(--len) * 1s / var(--flow-speed)) linear calc(var(--packet-phase) * var(--len) * -1s / var(--flow-speed)) infinite; }
+@keyframes dg-run { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+/* S 键暂停或恢复页内流动（设计 §3.2），只停"循环"那一个动画：
+   - 线和数据包的动画列表是「入场淡入, 循环」，暂停列表写成 running, paused，淡入照常走完，否则 S 之后翻到的页里流动线永远透明；
+   - 光环只有一个循环动画；节点本身带 data-flow，但它的入场动画不该停，所以只点名 .flowline/.packet/.halo。
+   风格若在定格时豁免（写法：.slide.settled [data-flow] { animation-play-state: running !important; }），这条仍要压住它：
+   两个 :not(#…) 各加一个 id 级优先级，风格写 body .slide.settled [data-flow] 之类也压得住（写法同 tools/regress.py 的 FREEZE_CSS） */
+body.flow-paused .slide :is(.flowline, .packet)[data-flow]:not(#flow-paused-a):not(#flow-paused-b) { animation-play-state: running, paused !important; }
+body.flow-paused .slide .halo[data-flow]:not(#flow-paused-a):not(#flow-paused-b) { animation-play-state: paused !important; }

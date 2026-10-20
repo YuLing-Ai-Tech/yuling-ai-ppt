@@ -1,0 +1,4 @@
+/* 通用组件 · 大数字 */
+/* 大数字 */
+.stat { font-size: var(--text-stat); font-weight: 800; line-height: 1; letter-spacing: -.03em; }
+.stat + .small { margin-top: 12px; }

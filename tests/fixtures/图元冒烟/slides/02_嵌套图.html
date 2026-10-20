@@ -1,0 +1,21 @@
+<section class="slide" data-section="图元冒烟">
+  <div class="eyebrow">图元冒烟 · 第 2 页</div>
+  <h2>三层嵌套 · 跨层连线 · 连到容器</h2>
+  <div class="dg" data-grid="24 12">
+    <section class="zone" data-id="region" data-at="6 0.6 17.5 11" data-tone="1" data-step="1"><div class="tab">REGION<span>华东 1</span></div></section>
+    <section class="zone" data-id="vpc" data-in="region" data-at="0.5 1 16.5 9.5" data-tone="4" data-step="2"><div class="tab">VPC<span>生产网络</span></div></section>
+    <section class="zone" data-id="pub" data-in="vpc" data-at="0.5 1 7 7.8" data-tone="6"><div class="tab">PUBLIC<span>公网子网</span></div></section>
+    <section class="zone" data-id="priv" data-in="vpc" data-at="8.5 1 7.5 7.8" data-tone="3" data-step="3"><div class="tab">PRIVATE<span>私网子网</span></div></section>
+    <div class="node" data-id="user" data-at="0 4.5 4.5 1.8" data-icon="U"><b>用户</b><small>浏览器</small></div>
+    <div class="node" data-id="lb" data-in="pub" data-at="0.5 1 6 1.8" data-icon="LB"><b>负载均衡</b><small>ALB</small></div>
+    <div class="node" data-id="web" data-in="pub" data-at="0.5 4.5 6 1.8" data-icon="W"><b>Web 服务</b><small>容器 ×3</small></div>
+    <div class="node" data-id="api" data-in="priv" data-at="0.5 1 6.5 1.8" data-icon="API" data-flow><b>业务 API</b><small>REST</small></div>
+    <div class="node" data-id="db" data-in="priv" data-at="0.5 4.5 6.5 1.8" data-icon="DB"><b>数据库</b><small>PostgreSQL</small></div>
+    <i class="edge" data-from="user" data-to="lb" data-label="HTTPS" data-flow="packet"></i>
+    <i class="edge" data-from="lb" data-to="web"></i>
+    <i class="edge" data-from="web" data-to="api" data-label="调用"></i>
+    <i class="edge" data-from="api" data-to="db" data-kind="data" data-label="读写"></i>
+    <i class="edge" data-from="db:l" data-to="pub:r" data-kind="async" data-label="备份"></i>
+    <i class="route" data-nodes="user lb web api"></i>
+  </div>
+</section>

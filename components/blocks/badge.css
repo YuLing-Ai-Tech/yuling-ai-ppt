@@ -1,0 +1,9 @@
+/* 通用组件 · 徽章 */
+/* 徽章：证据标签 / 状态 */
+.badge { display: inline-flex; align-items: center; gap: var(--space-inline); font-size: var(--text-caption); font-weight: 700; padding: 8px 18px; border-radius: var(--radius-pill);
+  background: var(--surface); box-shadow: var(--shadow); white-space: nowrap; }
+.badge::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+.badge.ran { color: var(--live-ink); } .badge.doc { color: var(--dev-ink); } .badge.guess { color: var(--planned); }
+.badge.warn { color: var(--bad); }
+.chip { display: inline-block; font-size: var(--text-caption); font-weight: 700; padding: 6px 16px; border-radius: var(--radius-pill); margin: 0 8px 8px 0;
+  background: var(--accent-soft); color: var(--accent); }

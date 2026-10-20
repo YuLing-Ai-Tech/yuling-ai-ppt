@@ -1,0 +1,21 @@
+<section class="slide" data-section="C4">
+  <div class="eyebrow">图种 2 / 9 · C4 容器图</div>
+  <h2>网上银行：系统边界里有哪些容器</h2>
+  <div class="dg" data-grid="24 12">
+    <div class="node" data-id="customer" data-shape="circle" data-at="0.3 4.2 2.9 3.6" data-tone="1"><b>客户</b><small>个人用户</small></div>
+    <section class="zone" data-id="bank" data-at="5 0.6 12.4 11" data-tone="4" data-step="1"><div class="tab">SYSTEM<span>网上银行系统</span></div></section>
+    <div class="node" data-id="spa" data-in="bank" data-at="0.3 1.2 4 1.9" data-icon="SPA"><b>单页应用</b><small>JavaScript · 浏览器</small></div>
+    <div class="node" data-id="mobile" data-in="bank" data-at="6.6 1.2 5 1.9" data-icon="APP"><b>手机银行</b><small>Swift · Kotlin</small></div>
+    <div class="node" data-id="api" data-in="bank" data-at="3.7 4.8 5 1.9" data-icon="API" data-step="2"><b>API 应用</b><small>Java · Spring</small></div>
+    <div class="node" data-id="db" data-in="bank" data-at="3.7 8.2 5 1.9" data-icon="DB" data-step="3"><b>数据库</b><small>Oracle</small></div>
+    <div class="node" data-id="mail" data-at="19.3 1.8 4.4 1.9" data-icon="MAIL" data-tone="6" data-step="2"><b>邮件系统</b><small>外部 · SMTP</small></div>
+    <div class="node" data-id="core" data-at="19.3 6.8 4.4 1.9" data-icon="CORE" data-tone="6" data-step="2"><b>核心银行</b><small>外部 · 主机</small></div>
+    <i class="edge" data-from="customer:t" data-to="spa:l" data-via="1.75,2.15" data-label="浏览器访问"></i>
+    <i class="edge" data-from="customer:b" data-to="db:l" data-kind="data" data-line="dashed" data-end="none"></i>
+    <i class="edge" data-from="spa:b" data-to="api:l" data-label="JSON / HTTPS"></i>
+    <i class="edge" data-from="mobile:b" data-to="api:t"></i>
+    <i class="edge" data-from="api" data-to="db" data-kind="data" data-label="SQL 读写"></i>
+    <i class="edge" data-from="api:r" data-to="mail:l" data-via="18.4,3" data-kind="async" data-label="发邮件"></i>
+    <i class="edge" data-from="api:r" data-to="core:l" data-via="14.3,7.5" data-label="XML / HTTPS"></i>
+  </div>
+</section>

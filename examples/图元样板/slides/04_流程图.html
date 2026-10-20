@@ -1,0 +1,21 @@
+<section class="slide" data-section="流程图">
+  <div class="eyebrow">图种 4 / 9 · 流程图</div>
+  <h2>报销审批：判断、回退、结束</h2>
+  <div class="dg" data-grid="24 12">
+    <div class="node" data-id="start" data-shape="pill" data-at="0.3 4.9 3 1.6" data-tone="3"><b>开始</b></div>
+    <div class="node" data-id="submit" data-at="4.6 4.8 3.8 1.8" data-icon="01" data-step="1"><b>提交报销</b><small>员工</small></div>
+    <div class="node" data-id="check" data-shape="diamond" data-at="9.8 3.7 4 4" data-tone="2" data-step="2"><b>金额 &gt; 5000？</b></div>
+    <div class="node" data-id="leader" data-at="15.4 1.4 3.8 1.8" data-icon="02" data-step="3"><b>部门审批</b><small>负责人</small></div>
+    <div class="node" data-id="finance" data-at="15.4 8.2 3.8 1.8" data-icon="03" data-step="3"><b>财务复核</b><small>财务</small></div>
+    <div class="node" data-id="pay" data-at="15.4 4.8 3.8 1.8" data-icon="04" data-step="3"><b>打款</b><small>出纳</small></div>
+    <div class="node" data-id="end" data-shape="pill" data-at="20.7 4.9 3 1.6" data-tone="3" data-step="3"><b>结束</b></div>
+    <i class="edge" data-from="start" data-to="submit"></i>
+    <i class="edge" data-from="submit" data-to="check"></i>
+    <i class="edge" data-from="check:t" data-to="leader:l" data-kind="human" data-label="是"></i>
+    <i class="edge" data-from="check:b" data-to="finance:l" data-label="否"></i>
+    <i class="edge" data-from="leader" data-to="pay" data-kind="human"></i>
+    <i class="edge" data-from="finance" data-to="pay"></i>
+    <i class="edge" data-from="pay" data-to="end"></i>
+    <i class="edge" data-from="leader:t" data-to="submit:t" data-via="17.3,0.4" data-kind="human" data-line="dashed" data-label="退回修改"></i>
+  </div>
+</section>

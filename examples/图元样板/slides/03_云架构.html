@@ -1,0 +1,24 @@
+<section class="slide" data-section="云架构">
+  <div class="eyebrow">图种 3 / 9 · 云架构</div>
+  <h2>Region › VPC › 可用区：三层嵌套</h2>
+  <div class="dg" data-grid="24 12">
+    <div class="node" data-id="users" data-at="0 4.9 3 1.9" data-icon="U"><b>用户</b><small>全国</small></div>
+    <section class="zone" data-id="region" data-at="4.4 0.5 19.4 11.2" data-tone="1" data-step="1"><div class="tab">REGION<span>华东 1</span></div></section>
+    <div class="node" data-id="cdn" data-in="region" data-at="0.6 4.4 3.4 1.9" data-icon="CDN"><b>CDN</b><small>静态资源</small></div>
+    <section class="zone" data-id="vpc" data-in="region" data-at="4.6 0.9 14.3 9.9" data-tone="4" data-step="2"><div class="tab">VPC<span>10.0.0.0/16</span></div></section>
+    <section class="zone" data-id="aza" data-in="vpc" data-at="0.5 1 6.4 8.4" data-tone="6"><div class="tab">AZ-A<span>可用区 A</span></div></section>
+    <section class="zone" data-id="azb" data-in="vpc" data-at="7.4 1 6.4 8.4" data-tone="3" data-step="3"><div class="tab">AZ-B<span>可用区 B</span></div></section>
+    <div class="node" data-id="lb" data-in="aza" data-at="0.5 1 5.4 1.8" data-icon="LB"><b>负载均衡</b><small>七层</small></div>
+    <div class="node" data-id="appa" data-in="aza" data-at="0.5 3.5 5.4 1.8" data-icon="ECS"><b>应用 A</b><small>容器 ×4</small></div>
+    <div class="node" data-id="dba" data-in="aza" data-at="0.5 6 5.4 1.8" data-icon="DB"><b>主库</b><small>RDS 主</small></div>
+    <div class="node" data-id="appb" data-in="azb" data-at="0.5 3.5 5.4 1.8" data-icon="ECS"><b>应用 B</b><small>容器 ×4</small></div>
+    <div class="node" data-id="dbb" data-in="azb" data-at="0.5 6 5.4 1.8" data-icon="DB"><b>备库</b><small>RDS 备</small></div>
+    <i class="edge" data-from="users" data-to="cdn" data-flow="packet" data-label="HTTPS"></i>
+    <i class="edge" data-from="cdn" data-to="lb" data-flow></i>
+    <i class="edge" data-from="lb" data-to="appa" data-flow="packet"></i>
+    <i class="edge" data-from="lb:r" data-to="appb:t" data-flow="packet"></i>
+    <i class="edge" data-from="appa" data-to="dba" data-kind="data"></i>
+    <i class="edge" data-from="appb" data-to="dbb" data-kind="data"></i>
+    <i class="edge" data-from="dba:b" data-to="dbb:b" data-via="16.15,11" data-kind="async" data-flow data-label="同步复制"></i>
+  </div>
+</section>

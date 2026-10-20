@@ -1,0 +1,4 @@
+/* 通用组件 · 图标块 */
+/* 图标块：一个大 emoji 或字，底色取主题渐变 */
+.icon { width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center; font-size: var(--text-icon); font-weight: 800; color: var(--on-color);
+  background: var(--theme); box-shadow: 0 12px 30px -8px var(--theme-solid); margin-bottom: 18px; }

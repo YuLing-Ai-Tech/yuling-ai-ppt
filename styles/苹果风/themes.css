@@ -1,0 +1,12 @@
+/* 苹果风 · 五套主题与渐变字 */
+.slide[data-theme="blue"] { --theme: var(--g-blue); --theme-solid: #0071E3; --c1: #0A84FF; --c2: #5AC8FA; --c3: #5E5CE6; }
+.slide[data-theme="sunset"] { --theme: var(--g-sunset); --theme-solid: #FF2D55; --c1: #FF375F; --c2: #FF9F0A; --c3: #BF5AF2; }
+.slide[data-theme="violet"] { --theme: var(--g-violet); --theme-solid: #AF52DE; --c1: #5E5CE6; --c2: #BF5AF2; --c3: #FF375F; }
+.slide[data-theme="mint"] { --theme: var(--g-mint); --theme-solid: #30B0C7; --c1: #30D158; --c2: #0A84FF; --c3: #64D2FF; }
+.slide[data-theme="fire"] { --theme: var(--g-fire); --theme-solid: #FF3B30; --c1: #FF453A; --c2: #FF9F0A; --c3: #FF375F;
+  --cat-1: #FF3B30; --cat-2: #FF9500; --cat-3: #FFD60A; --cat-4: #34C759; --cat-5: #30B0C7; --cat-6: #0071E3; --cat-7: #AF52DE; --cat-8: #FF2D55; }
+.slide[data-theme] .eyebrow { color: var(--theme-solid); }
+/* 渐变字：光泽持续流过 */
+.grad-text { background: var(--theme); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: grad-slide 5s linear infinite; }
+@keyframes grad-slide { from { background-position: 0% 0; } to { background-position: -250% 0; } }

@@ -1,0 +1,5 @@
+/* 通用组件 · 截图墙 */
+/* 截图墙：卡片带 3D 翻入 */
+.wall { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-stack); }
+.wall .toolcard { --lift: 0px; }
+.slide.active .wall .toolcard { animation: a-flip 1.2s var(--ease) both; animation-delay: calc(var(--d, 0) * 90ms + 400ms); transform-origin: 50% 0; }

@@ -1,0 +1,5 @@
+/* 放映内核 · 页面与显隐状态机：同一时刻只有 .active 可见，.leaving 留给退场动画；安全边距让出底部导航 */
+.slide { position: absolute; inset: 0; padding: 96px 120px 150px; display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; visibility: hidden; }
+.slide.active { opacity: 1; visibility: visible; }
+.slide.leaving { opacity: 0; visibility: visible; }

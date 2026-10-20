@@ -1,0 +1,33 @@
+/* 通用组件 · 毛玻璃卡片 */
+/* 毛玻璃卡片 */
+.glass { background: var(--glass-bg); backdrop-filter: blur(30px) saturate(1.8); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card); padding: 34px 36px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  transition: transform .8s var(--ease), box-shadow .8s var(--ease); }
+.glass.is-hover { --lift: -8px; box-shadow: var(--shadow-lift); transition: transform .25s var(--ease), box-shadow .6s var(--ease); }
+/* 跟随鼠标的镜面高光（JS 写入 --mx/--my；高光颜色在风格皮肤里） */
+.glass::after, .win > .spot { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s;
+  mix-blend-mode: soft-light; }
+.glass.is-hover::after { opacity: 1; }
+/* 流动光环边框：给重点卡片（光环配色在风格皮肤里） */
+.ring { isolation: isolate; }
+.ring::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; padding: 3px; z-index: -1;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: ring-spin 4s linear infinite; }
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes ring-spin { to { --angle: 360deg; } }
+/* 轻微悬浮 */
+.float { animation: float 6s ease-in-out infinite; }
+.float.slow { animation-duration: 8s; animation-delay: -3s; }
+@keyframes float { 50% { translate: 0 -14px; } }
+.glass h3 { font-size: var(--text-heading); }
+.glass p, .glass li { font-size: var(--text-body); line-height: 1.6; color: var(--ink-2); }
+.glass ul { padding-left: 1.1em; }
+.glass .tag { position: absolute; top: 26px; right: 28px; }
+/* 卡片顶部一道主题色光条 */
+.glass.bar::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--theme); }
+/* 光泽扫过 */
+/* 用 transition 做光泽，避免和 data-a 的登场 animation 抢同一个属性 */
+.slide.active .glass.shine { background-position: -50% 0, 0 0;
+  transition: background-position 2.2s var(--ease-io) calc(var(--d, 0) * 130ms + 1200ms), transform .8s var(--ease), box-shadow .8s var(--ease); }
+@keyframes shine { to { transform: translateX(120%); } }

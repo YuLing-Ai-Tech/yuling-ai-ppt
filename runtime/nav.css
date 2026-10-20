@@ -1,0 +1,21 @@
+/* 放映内核 · 底部导航 */
+/* 底部导航（沿用参考页布局）；配色、毛玻璃、深色页变体在风格的 skin-chrome.css */
+#nav { position: absolute; left: 0; right: 0; bottom: 0; height: 104px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 56px; border-top: 1px solid var(--line);
+  z-index: 20; transition: background 1.2s var(--ease-io), border-color 1.2s; }
+#brand { display: flex; align-items: center; gap: 14px; font-size: var(--text-small); font-weight: 600; color: var(--ink-2); min-width: 460px; }
+#brand img { width: 40px; height: 40px; border-radius: 10px; }
+#brand em { font-style: normal; color: var(--ink-3); font-weight: 500; }
+body.is-night #brand, body.is-night #brand em { color: var(--night-ink-2); }
+#controls { display: flex; gap: 16px; }
+#controls button { font: 600 var(--text-small) var(--font); padding: 14px 34px; border-radius: var(--radius-pill); border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer; box-shadow: var(--shadow); transition: transform .4s var(--spring); }
+#controls button:hover { transform: translateY(-3px) scale(1.03); }
+#controls #play, body.is-night #controls #play { background: var(--accent); color: var(--on-color); border-color: transparent; min-width: 132px; }
+#controls #play.is-on { animation: breathe 1.8s ease-in-out infinite; }
+@keyframes breathe { 50% { box-shadow: 0 0 0 8px transparent, 0 0 30px 4px var(--accent-glow); } }
+#meter { min-width: 460px; display: flex; align-items: center; gap: 18px; justify-content: flex-end; font: 600 var(--text-caption) var(--font); color: var(--ink-2); }
+body.is-night #meter { color: var(--night-ink-2); }
+#bar { width: 260px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+#bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 1s var(--ease); }
+#hint { position: absolute; top: 28px; right: 40px; font-size: var(--text-label); color: var(--ink-3); transition: opacity 1s; z-index: 20; }

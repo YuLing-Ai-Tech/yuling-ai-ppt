@@ -1,0 +1,32 @@
+/* 放映内核 · data-a 登场与标题逐行升起 */
+/* 登场动画：data-a 选方式，--d 控顺序；位移、模糊、透明同时收束 */
+.slide [data-a] { opacity: 0; }
+.slide.active [data-a] { animation-duration: 1.3s; animation-timing-function: var(--ease); animation-fill-mode: both; animation-iteration-count: 1;
+  animation-delay: calc(var(--d, 0) * 130ms + 350ms); }
+.slide.active [data-a="up"] { animation-name: a-up; }
+.slide.active [data-a="left"] { animation-name: a-left; }
+.slide.active [data-a="right"] { animation-name: a-right; }
+.slide.active [data-a="zoom"] { animation-name: a-zoom; }
+.slide.active [data-a="blur"] { animation-name: a-blur; animation-duration: 1.6s; }
+.slide.active [data-a="flip"] { animation-name: a-flip; transform-origin: 50% 0; }
+.slide.active [data-a="pop"] { animation-name: a-pop; animation-timing-function: var(--spring); animation-duration: .8s; }
+.slide.active [data-a="stamp"] { animation-name: a-stamp; animation-timing-function: var(--spring); animation-duration: .7s; }
+.slide.active [data-a="rise"] { animation-name: a-rise; animation-duration: 1.6s; }
+.slide.active [data-a="fade"] { animation-name: a-fade; }
+@keyframes a-up { from { opacity: 0; transform: translateY(70px); filter: blur(10px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes a-left { from { opacity: 0; transform: translateX(-90px); filter: blur(10px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes a-right { from { opacity: 0; transform: translateX(90px); filter: blur(10px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes a-zoom { from { opacity: 0; transform: scale(.82); filter: blur(12px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes a-blur { from { opacity: 0; filter: blur(30px); transform: scale(1.15); letter-spacing: .1em; } to { opacity: 1; filter: none; transform: none; } }
+@keyframes a-flip { from { opacity: 0; transform: perspective(1200px) rotateX(-60deg) translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes a-pop { 0% { opacity: 0; transform: scale(.4); } 100% { opacity: 1; transform: none; } }
+@keyframes a-stamp { 0% { opacity: 0; transform: scale(2.6) rotate(-10deg); filter: blur(6px); } 100% { opacity: 1; transform: none; filter: none; } }
+@keyframes a-rise { from { opacity: 0; transform: perspective(1600px) translateY(160px) rotateX(24deg) scale(.9); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: none; } }
+@keyframes a-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* 标题逐行从遮罩后升起（JS 把 <br> 分隔的每行包成 .line） */
+.line { display: block; overflow: hidden; padding: .04em 0 .1em; margin: -.04em 0 -.1em; }
+.line > span { display: inline-block; transform: translateY(110%); }
+.slide.active .line > span { animation: line-up 1.3s var(--ease) both; animation-delay: calc(var(--l, 0) * 120ms + var(--d, 0) * 130ms + 300ms); }
+@keyframes line-up { from { transform: translateY(110%) skewY(4deg); } to { transform: none; } }

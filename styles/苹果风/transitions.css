@@ -1,0 +1,7 @@
+/* 苹果风 · 幻灯片转场 */
+/* 新页从放大模糊聚焦进来，旧页缩小模糊退场；显隐状态机在 runtime/slide.css */
+.slide { transform: scale(1.06); filter: blur(16px);
+  transition: opacity 1s var(--ease), transform 1.4s var(--ease), filter 1s var(--ease), visibility 1s; }
+.slide.active { transform: none; filter: none; }
+.slide.leaving { transform: scale(.92); filter: blur(12px);
+  transition: opacity .6s var(--ease-io), transform .8s var(--ease-io), filter .6s var(--ease-io); }

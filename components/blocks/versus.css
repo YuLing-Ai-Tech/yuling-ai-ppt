@@ -1,0 +1,8 @@
+/* 通用组件 · 对比 */
+/* 对比：错 / 对 */
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-grid); }
+.vs > div { border-radius: var(--radius-block); padding: 30px 32px; font-size: var(--text-emphasis); line-height: 1.6; }
+.vs .bad-side { background: var(--bad-soft); border: 2px solid var(--bad-line); }
+.vs .good-side { background: var(--live-soft); border: 2px solid var(--live-line); }
+.vs b { display: block; font-size: var(--text-small); margin-bottom: 8px; }
+.vs .bad-side b { color: var(--bad); } .vs .good-side b { color: var(--live-ink); }

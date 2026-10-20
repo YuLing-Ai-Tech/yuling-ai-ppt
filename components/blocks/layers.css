@@ -1,0 +1,12 @@
+/* 通用组件 · 六层地图 */
+/* 六层地图：色块从下往上依次堆叠 */
+.layers { display: flex; flex-direction: column; gap: 14px; }
+.layer { display: flex; align-items: center; gap: var(--space-grid); padding: 24px 36px; border-radius: var(--radius-block); color: var(--on-color);
+  background: linear-gradient(100deg, var(--c1), var(--c2)); box-shadow: 0 20px 40px -20px var(--c1); position: relative; overflow: hidden; }
+.layer b { font-size: var(--text-heading); min-width: 190px; } .layer span { font-size: var(--text-body); opacity: .95; }
+.layer::after { content: ""; position: absolute; inset: 0;
+  transform: translateX(-120%); }
+.slide.active .layer { animation: layer-in 1.2s var(--ease) both; animation-delay: calc(var(--d) * 160ms + 500ms); }
+.slide.active .layer::after { animation: shine 1.8s var(--ease-io) both; animation-delay: calc(var(--d) * 160ms + 1400ms); }
+@keyframes layer-in { from { opacity: 0; transform: perspective(1200px) translateY(120px) rotateX(50deg) scale(.9); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: none; } }

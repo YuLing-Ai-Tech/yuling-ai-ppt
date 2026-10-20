@@ -1,0 +1,7 @@
+/* 放映内核 · 重置与 1920×1080 舞台 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: var(--font); overflow: hidden;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+#viewport { position: fixed; inset: 0; overflow: hidden; background: var(--bg); transition: background 1.2s var(--ease-io); }
+body.is-night #viewport { background: var(--night); }
+#stage { width: 1920px; height: 1080px; position: absolute; left: 50%; top: 50%; transform-origin: center; overflow: hidden; }

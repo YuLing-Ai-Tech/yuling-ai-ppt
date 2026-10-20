@@ -1,0 +1,6 @@
+/* 通用组件 · 提示框 */
+/* 提示框：左侧色条 */
+.callout { border-radius: var(--radius-panel); padding: 22px 28px; background: var(--panel-bg); box-shadow: var(--shadow); font-size: var(--text-body); line-height: 1.6;
+  border-left: 8px solid var(--theme-solid); }
+.callout b { color: var(--theme-solid); }
+.callout.warn { border-left-color: var(--bad); } .callout.warn b { color: var(--bad); }

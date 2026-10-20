@@ -1,0 +1,36 @@
+/* 苹果风 · 内容块皮肤：颜色名变体、彩虹光环、光泽、阶梯渐变、截图窗红绿灯与扫描光 */
+/* 卡片：鼠标镜面高光、彩虹光环、光泽扫过 */
+.glass::after, .win > .spot { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .75), transparent 55%); }
+.ring::before { background: conic-gradient(from var(--angle, 0deg), #0A84FF, #BF5AF2, #FF375F, #FF9F0A, #30D158, #0A84FF); }
+.glass.shine { background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, .95) 50%, transparent 60%) no-repeat, var(--glass-bg);
+  background-size: 300% 100%, auto; background-position: 150% 0, 0 0; }
+/* 图标块：颜色名变体 */
+.icon.pink { background: linear-gradient(135deg, #FF2D55, #FF6482); box-shadow: 0 12px 30px -8px #FF2D55; }
+.icon.orange { background: linear-gradient(135deg, #FF9500, #FFCC00); box-shadow: 0 12px 30px -8px #FF9500; }
+.icon.green { background: linear-gradient(135deg, #34C759, #30D158); box-shadow: 0 12px 30px -8px #34C759; }
+.icon.teal { background: linear-gradient(135deg, #30B0C7, #5AC8FA); box-shadow: 0 12px 30px -8px #30B0C7; }
+.icon.purple { background: linear-gradient(135deg, #AF52DE, #5856D6); box-shadow: 0 12px 30px -8px #AF52DE; }
+.icon.blue { background: linear-gradient(135deg, #0071E3, #32ADE6); box-shadow: 0 12px 30px -8px #0071E3; }
+.icon.red { background: linear-gradient(135deg, #FF3B30, #FF9500); box-shadow: 0 12px 30px -8px #FF3B30; }
+/* 标签：颜色名变体 */
+.chip.pink { background: rgba(255, 45, 85, .1); color: #D70015; } .chip.orange { background: var(--dev-soft); color: var(--dev-ink); }
+.chip.green { background: var(--live-soft); color: var(--live-ink); } .chip.purple { background: rgba(175, 82, 222, .12); color: #8944AB; }
+.chip.teal { background: rgba(48, 176, 199, .13); color: #0E7C8C; }
+/* 阶梯：投影 + 每级一段渐变 */
+.ladder .step { box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .35); }
+.ladder .step:nth-child(1) { background: linear-gradient(160deg, #34C759, #30B0C7); }
+.ladder .step:nth-child(2) { background: linear-gradient(160deg, #30B0C7, #0071E3); }
+.ladder .step:nth-child(3) { background: linear-gradient(160deg, #0071E3, #5856D6); }
+.ladder .step:nth-child(4) { background: linear-gradient(160deg, #5856D6, #AF52DE); }
+.ladder .step:nth-child(5) { background: linear-gradient(160deg, #AF52DE, #FF2D55); }
+/* 六层地图：扫光 */
+.layer::after { background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .45) 50%, transparent 70%); }
+/* 二维码卡：白底 + 流动彩虹细边 + 投影 */
+.q-card { background: linear-gradient(var(--qr-bg), var(--qr-bg)) padding-box,
+    conic-gradient(from var(--angle, 0deg), #0A84FF, #BF5AF2, #FF375F, #FF9F0A, #30D158, #0A84FF) border-box;
+  animation: ring-spin 5s linear infinite; box-shadow: 0 2px 6px rgba(0, 0, 0, .06), 0 30px 70px rgba(0, 40, 120, .18); }
+/* 截图窗：macOS 红绿灯、扫描光、倾斜投影 */
+.win .titlebar i { background: #FF5F57; }
+.win .titlebar i:nth-child(2) { background: #FEBC2E; } .win .titlebar i:nth-child(3) { background: #28C840; }
+.win::after { background: linear-gradient(180deg, transparent, rgba(0, 113, 227, .16), transparent); }
+.win.tilt { box-shadow: -30px 50px 100px -30px rgba(0, 40, 120, .35); }

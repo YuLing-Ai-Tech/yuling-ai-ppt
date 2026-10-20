@@ -1,0 +1,12 @@
+<section class="slide" data-section="连线检查">
+  <h2>三处几何错误</h2>
+  <div class="dg" data-grid="24 12">
+    <section class="zone" data-id="vpc" data-at="1 1 10 8"></section>
+    <div class="node" data-id="api" data-in="vpc" data-at="1 1 4 2"><b>API</b></div>
+    <div class="node" data-id="db" data-in="vpc" data-at="3 2 4 2"><b>和 API 重叠</b></div>
+    <div class="node" data-id="cache" data-in="vpc" data-at="8 5 4 2"><b>伸出 VPC</b></div>
+    <div class="node" data-id="web" data-at="16 1 4 2"><b>Web</b></div>
+    <div class="node" data-id="mid" data-at="13.2 5.5 4 2"><b>挡住标签</b></div>
+    <i class="edge" data-from="web:b" data-to="mid:l" data-via="15.2,6.5" data-label="这个标签压在节点上"></i>
+  </div>
+</section>
