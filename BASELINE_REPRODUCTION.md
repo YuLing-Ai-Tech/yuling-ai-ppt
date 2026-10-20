@@ -1,3 +1,160 @@
+# PPT Issue #1：双平台获批视觉基线采用与复验
+
+## 当前结论（2026-10-20）
+
+**我跑过：本轮规定的 Windows 与独立 WSL2 本地检查均已通过，完整套件零失败、零跳过。尚未推送、创建 PR、合并或部署。Issue 仍待公开发布授权、远端 CI、Architect Review 和所有者审批。**
+
+此前两平台各 166 passed / 1 failed 的记录完整保留在本文历史部分。本轮没有提高容差、删除测试或把未执行检查写成通过。
+
+## 实际测试版本与审批来源
+
+| 仓库 | 两平台实际执行完整验证的代码提交 |
+| --- | --- |
+| Python/HTML 内核 | `97482c889a9e196c56ff3cb64a4e711599577624` |
+| Mini-App | `36f62fa7d5f4e78735dfe14d9cbaa192c9815116` |
+
+本报告提交是上述代码提交的文档后继，不冒称其自身已经执行全部测试。两平台 SHA 完全一致；各自安装依赖，显式指定本平台的新内核克隆。
+正式 `ENGINE_BASELINE.json` 仍锁 Public 冻结根提交，未提前更新为未合并候选；本次是实际双仓候选组合验证。
+
+所有者已明确批准三组 Public 候选作为视觉目标：内核 Windows 九页、WSL2 九页、应用 Windows 软件渲染十二页，并批准本轮采用计划。获批渲染来源为内核 `f2c33fe124e864114020d15b66749025c8bb0046` 与应用 `d7508f77ed044ccc3ab9da40bf5a79076c33129e`；后续提交仅修改测试工具、基线资料与失败传递回归，不改产品渲染代码。
+
+获批 `candidate-a` 原 PNG 按 SHA256 原样复制入库。应用 Linux 十二页复用原 Public PNG。两仓原目录的 **23 个 PNG/清单文件字节未变**；新增平台目录共 42 张 PNG，其中 12 张为原 Linux 图的逐字节复用。
+Windows 应用几何数据经正式截图程序补采，只有全部 PNG 与获批图哈希相同时才登记；没有用补采图替换获批原件。
+
+## 为什么此前像素失败现在可以通过
+
+原九页 Golden 的完整环境无法核验，且第八页圆形修复有意改变画面。此前失败被保留为事实；原图作为历史档案，不再被冒称为本轮获批视觉目标。
+原 `test_diagram_samples_match_baseline_zero_diff` 仍存在并要求零差异，当前参照按平台选择的获批目标。根目录旧图继续核验完整性。
+应用 Windows 原参数重拍出现第 1、11、12 页 7、3、2 个像素波动。仅在 Windows 截图启动参数中增加 `--disable-gpu` 后重复截图和正式比较通过；Linux 参数不变，产品 HTML/CSS/JS 不变。
+方案评估：保留存在波动的原参数 20/100；固定 Windows 软件渲染且保留严格断言 90/100；提高像素容差 0/100，拒绝。
+
+## 环境与环境门禁
+
+| 项目 | 原生 Windows | 独立 Ubuntu WSL2 |
+| --- | --- | --- |
+| 系统 | Windows 11 x64，build 26200 | Ubuntu 24.04.5 x64，WSL2 kernel 6.18.33.2 |
+| Node / pnpm / uv | 22.23.3 / 9.0.0 / 0.13.1 | 22.23.3 / 9.0.0 / 0.13.1 |
+| Python | 3.12.10 | 3.12.3 |
+| Python Playwright / Pillow / pytest | 1.60.0 / 12.3.0 / 9.1.1 | 1.60.0 / 12.3.0 / 9.1.1 |
+| 应用 playwright-core | 1.64.0 | 1.64.0 |
+| Chrome for Testing | 152.0.7977.64 | 152.0.7977.64 |
+| 视口 | 1920×1080 | 1920×1080 |
+
+浏览器来自官方 CfT 下载，二进制与归档来源另有本地校验记录；未替换系统浏览器。
+Windows 浏览器 SHA256：`79832d1e60cbad9323c07339f9608bc0ce93cb9242b9b5481c04a0c536720980`。
+Linux 浏览器 SHA256：`3ed7df7904694145caf8da676d053f68300e8d2778a507e27b15f142c4efd0af`。
+统一相对路径字体指纹：Windows `18e393e867896c06726b5cfe773c6b49c491970d81e0b9839c3292ac1ee23539`；Linux `2cbf96553560ba1d17405b92aeadee426f55d5e8b5ca6dd203abce2b2c773852`。它们由排序后的 UTF-8 相对路径、NUL、文件 SHA256、LF 计算，与原候选完整字体清单保留对应关系。
+检查前核验平台、x64 架构、浏览器二进制及版本、Playwright、字体指纹、视口和启动参数。缺少平台清单、损坏图片、不支持平台或环境变化均明确失败；没有回退历史图、跨平台混比或跳过开关。
+macOS 未实机验证。Docker 未代替独立 WSL2。测试使用无 pip 种子的隔离 uv 宿主；构建 Python、测试 overlay 与宿主实际路径分别审计。
+
+## 本轮实际结果（我跑过）
+
+| 项目 | Windows | 独立 WSL2 |
+| --- | --- | --- |
+| 内核完整 Python 套件 | 184 passed / 0 failed / 0 errors / 0 skipped | 184 passed / 0 failed / 0 errors / 0 skipped |
+| 内核快测 | 73 passed / 111 deselected | 73 passed / 111 deselected |
+| 内核行数门禁 | 通过 | 通过 |
+| 内核平台九页严格比较 | 零差异 | 零差异 |
+| 内核独立重拍及颜色变异 | 重拍零差异；变异仅第4、5页 | 同左 |
+| 应用 TypeScript / ESLint | 通过 | 通过 |
+| 应用可移植测试 | 10 项脚本 + 38 项 unit，通过 | 同左 |
+| 应用完整跨仓集成 | 45 passed / 0 failed / 0 skipped | 同左 |
+| 应用十二页几何与像素 | 通过，零像素差异 | 同左 |
+| 应用反误通过检查 | 旋转、渐变两项变异均拒绝 | 同左 |
+| 生产构建 | Next 16.4.2、tsup 9，通过 | 同左 |
+| 冻结安装 | 通过 | 通过 |
+| 完整、生产依赖审计 | 零告警，未忽略编号 | 同左 |
+| Python 与隔离工具环境审计 | 无已知漏洞 | 同左 |
+
+新增环境异常回归覆盖平台选择、缺失目标、图片丢失/损坏、错误浏览器或 Playwright、字体变化、参数/视口变化和不支持平台。完整套件数量与快测收集总数一致。
+真实生产路径为 `DeckOutline → buildDeckHtml → Python builder → 单文件 HTML → 浏览器 QA`：合成中文、嵌入 PNG、十二页及语义动画通过；跨仓用例覆盖长中文和压缩后仍溢出的拒绝。新增持久回归复制真实 builder、故意缺失样式清单，验证 Python 实际退出 1 后包装层传递 `PPT builder failed (1):`；不使用 mock，并恢复环境变量及安全清理独立临时目录。
+
+## 命令与证据
+
+两平台使用上述固定工具，并显式配置各自 `PPT_ENGINE_ROOT`、`PPT_PYTHON_PATH`、`PPT_CHROME_PATH`。Windows 受控套件启用 UTF-8；另有强制关闭 Python UTF-8 模式的真实构建回归。
+
+```bash
+./tools/ci.sh --fast
+uv run --no-project --python 3.12 --with playwright==1.60.0 --with pillow==12.3.0 --with pytest==9.1.1 python -m pytest tests -q --basetemp="$EVIDENCE_TMP" --junitxml="$EVIDENCE_XML"
+pnpm install --frozen-lockfile --offline
+pnpm validate
+pnpm test:portable
+pnpm test:ppt
+pnpm test:ppt:golden:geometry
+pnpm test:ppt:golden
+pnpm build
+pnpm audit --json
+pnpm audit --prod --json
+```
+
+Windows 快测等价执行同一工具链的行数检查和 `pytest -q -m "not slow and not smoke"`。每次使用全新仓库外临时目录；完整测试不加筛选标记，所列最终验收命令退出码均为 0。
+Python 审计命令为 `uv tool run --from pip-audit pip-audit --path <实际环境路径> --format json --progress-spinner off`，同时覆盖构建环境、实际测试 overlay 和隔离 uv 宿主。
+本轮应用流程曾因记录器保护旧同名日志而中止，重复调用未执行测试；原退出记录保留，后续像素、生产形状和构建改用唯一日志名完成。没有覆盖失败日志或将记录器中止改写成测试通过。
+
+## 安全、交付和回滚
+
+完整 Public Git 历史秘密扫描无命中；已人工复核新增 PNG 来源、跟踪文件与待提交差异。未加入真实 env、凭据、客户资料、培训站点、个人联系方式、缓存或生成目录。历史上已由所有者批准公开的贡献者 Git 身份继续保留，不展示地址。
+脚本测试中的临时数据为合成数据。二维码/联系方式相关命中为既有组件、占位符或审查文字；看似 IP 的内核版本号经过人工分类，未发现真实部署地址。
+本轮基线采用没有新增依赖或继承旧告警例外，相对此前 Public 候选 d7508f7 未改锁文件；相对 Public main 已有的 Playwright 精确锁定仍保留。浏览器环境参数仅用于受控视觉 QA。
+本地提交已按环境/测试修正、获批图片采用、复验报告分开。正式内核锁、历史标签、main、原工作树和 DVSK 均未改动。
+本地技术门禁已满足，发布授权、远端 CI、Architect Review 与所有者审批仍待完成，不能据此宣布 Issue 已完成或可进入 M1。
+若以后合并，使用新的 revert PR 回滚本轮环境选择和采用提交，保留历史与标签；恢复前一候选可能重新出现已记录的历史视觉失败，必须重跑并如实报告。
+
+证据快照 `acceptance-evidence-index.json` SHA256：`af3ca5cde673eb94bd875ea742c70fc15f5541eae3cfb53d013fdb47f927cbf0`。原始路径、日志、截图和 XML 留在仓库外；公开报告仅提供安全文件标签与哈希。文档提交及其最终扫描另有本地交付记录，避免循环哈希。
+
+| 本地证据标签 | SHA256 |
+| --- | --- |
+| `code-checkpoints.json` | `92e71e282f2c5170440e5e842230724b3d747ef27dbac58cb880a46e8a3a04bb` |
+| `asset-review.json` | `b02ee5863c2ad652ae0ad21966a56c41aacd193e9d15793ed305c92a694d762f` |
+| `adoption-source.json` | `ceed6b9ea8647ae061d0892ec90b7e5a4c6fe31b5cec7395ddde2db00775b3c2` |
+| `windows-environment-detail.json` | `a846c6c31026db904d891de1c9ff698fc117d4d006e4d3bd70bd58915cd734f8` |
+| `wsl/app/environment.json` | `8313cabf4f08ccdc9a92023f84982e2f20061bfa1e1dd279d1db01894e3f721f` |
+| `windows-full.xml` | `11eeac3ec8dca36cb4aab22e15a983080eb7ccb904b024ab787ac80fff6794a7` |
+| `windows-engine-full.log` | `c4e5bc0352a0ebf0ba9afea023ee5c92556e0dc11dcd6fbb46605ea5dc37ecc7` |
+| `wsl/full.xml` | `e3c226de554d64280a4c5e83d829b9407e864c9894f4ae06a6d52af0d5ceccc6` |
+| `wsl/full.log` | `101042a509f1994ea5dabd74ab99c30faf101a69e64e214875024d0c7313f875` |
+| `engine-fast-final.log` | `165c77d36c54b3c774d80b24dd053d86caa1370f6718e3f51e58e9138da53c74` |
+| `wsl/fast.log` | `144e9faa563ba6128fc0884cf0503243cef6c07d1a69882d93202a82745fe909` |
+| `line-limits.log` | `be69cbae4de3bcfbb5d921250e8b5e9151698fec1cf0ee64938e542bd27dd0c8` |
+| `windows-app-install.log` | `c9eb5c14d36455cbbfbfeb42526af5aadf3098b085d223bd6bd51ee72258ebfd` |
+| `windows-app-validate.log` | `b2a3402d81012bd2f15521beeefa1814e119d1d4d00ada2ea463f82c474dd7af` |
+| `windows-app-portable.log` | `379958cc75a1bbdcaa592fa0cc89d2f9f47c489b9b50de940bc34330f2b06a2c` |
+| `windows-app-integration.log` | `552391fdbe8403095b56391b51b856267664cfca242547ea3ccec005409950be` |
+| `windows-app-geometry.log` | `cf2e4712a433c14b7caa32960bf479136c61d47b9a13672603b301184186f079` |
+| `windows-app-pixel-final.log` | `a0476ef73763739a18aef871013d771173760b0c5bb71dbb847fe958ad0d97c6` |
+| `windows-app-production-final.log` | `66c7f7b9b957ae35f61a3baa334746776a53ecec7b40d76e8ab071dd18303266` |
+| `windows-app-build-final.log` | `a9fda6655e96dc7531d74777bd1b058f607dde69d925fbe4c20079e6e7c181ee` |
+| `wsl/app/validate.log` | `d58959e0d4c221c95ff63bf155798da61ac9b1362d61179ac17a92533ec630df` |
+| `wsl/app/portable.log` | `7746971f55ab13504649a789b27ce5cbe229f8c948f8494bf69c2cd626d6a23a` |
+| `wsl/app/integration.log` | `6dd55f71e6f98285fd452c58df9025859d4eac4595e4773520af79e890bf798d` |
+| `wsl/app/geometry.log` | `ba449aa0db99fa89f5cdfdb36ff2be6e9f67fa5a83a866a7ddda7f36985067a3` |
+| `wsl/app/pixel.log` | `741e1b9fa0908ad13215cb6e9d63b07d832609fce7da1b36157cf9c3b33f1051` |
+| `wsl/app/production.log` | `91265fe259a13506dda7280aa3e0f4b1d41d50160db87b9b0e4ed67cb729fe01` |
+| `wsl/app/build.log` | `37e08569177580bc922a6e1d22fec4e9b6309dd390060e482c4e9a24f0a10b2c` |
+| `windows-app-audit-full.log` | `6cadcf2e93ca634e41afe74f167d3a4f653bef848f631edcb2b577d84b5870b9` |
+| `windows-app-audit-prod.log` | `36872159045ec6e4454410c8f52e9219e00a49a67cc78a3a520e3a3744ac15bf` |
+| `wsl/app/audit-full.log` | `6cadcf2e93ca634e41afe74f167d3a4f653bef848f631edcb2b577d84b5870b9` |
+| `wsl/app/audit-prod.log` | `36872159045ec6e4454410c8f52e9219e00a49a67cc78a3a520e3a3744ac15bf` |
+| `python-audit-windows.log` | `4dd340b571e44b9faf9f72edddb8b9888bf3f4fb8c86915e3767842b66bcd656` |
+| `wsl/python-audit.log` | `5a3f6af3f16a44c3fb2f76cdaa252248b7f87a23d7fcf24c3c9ddd355e10388a` |
+| `engine-secrets.log` | `ad0207fcabc97d0e8d82ec83fcc25e97bbd605a94d72cd14b26ef49efdee31d1` |
+| `app-secrets.log` | `34ebe5ab94ce368770bc0e3a884248c3ac997aadb3ee520f80a8d75f73c1cb74` |
+| `windows-app-orchestration-note.json` | `6e8e66d21628fdf144936c0523dfd65a83d2ac24a432eabb18ccfa7dcc22ee40` |
+| `windows-executed-harness.txt` | `c2a27e12e893a4b7bc16472298f8f5bb0215b71cd2722683415c5f5e48b693c6` |
+| `wsl-executed-harness.txt` | `90b01dd889b5fbe84ddcc6e0fb2aad8502c91b1b5efaacf12cbefa3f9706be05` |
+| `wsl/production-harness.ts` | `4268403ecb3f8a7a05708a833078435425bc40f1039804d3232ba2abb5e16ed6` |
+| `windows-pixel-evidence-index.json` | `1af88806c3eef6b78e8afa44e1c1837af0a0db426afbd1e92326e2163f28be31` |
+| `wsl-pixel-evidence-index.json` | `4a43236a58231f2c036c4e1717a6968cf708a57e19b34cf630bf75d05ecaa858` |
+| `windows-app-final-captures/capture-integrity.json` | `4af5b5ccb66eca39fe192757deda1f24718c447f83ab48dd8da68217c2367d08` |
+| `wsl/app-final-captures/capture-integrity.json` | `c00f3c8b9b077baf1ccd33773e3f2c7489ede24d967ee9f0f556577f4809d95c` |
+
+## 正式采用前的历史记录
+
+以下原文保留此前状态与失败，不代表当前验收结论。
+
+<details>
+<summary>展开正式采用前的完整复现报告</summary>
+
 # Public PPT Issue #1 独立复现报告
 
 **状态：Blocked，本地候选待审，不是冻结或放行。**
@@ -183,3 +340,6 @@ Windows 清理工具后的首次快测遇到系统旧 pytest 临时链接权限�
 | `wsl-pixel-evidence-index.json` | `b22fba808f7ba7082c489761e71aa7498d9d8fa5beffdac45a5bc794734ad313` |
 | `production-harness-final-windows.ts` | `6cda81947b1faa7d71b56c4c18bd877d85dfa94ace05c9bda44c5a0dbb42eca9` |
 | `wsl/production-harness-final-wsl.ts` | `57738646d63e398b678a0d5f78130a3a267df98e8b53d747067eecdc1a7a9ea0` |
+
+
+</details>
