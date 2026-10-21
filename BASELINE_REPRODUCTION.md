@@ -1,3 +1,171 @@
+# PPT Issue #1：Mac 兼容修复与 Python 工具链复验
+
+## 当前结论（2026-10-21）
+
+**我跑过：新版工具链下 Windows、独立 Ubuntu WSL2 的本轮规定检查全部通过，完整内核套件零失败、零错误、零跳过；依赖审计零告警。Mac 尚未实机验证，Issue 仍为 Blocked。**
+
+本次更新现有内核 PR #5、应用 PR #6；不新增 PR、不关闭总 Issue、不合并、不部署。
+Mac 候选审批与完整实机验收、远端 CI、Architect/所有者批准、最终内核合并 SHA 配对仍是独立门禁。
+下方历史报告与中断日志保留，不将旧结果算作本轮结果。
+
+## 实际完整测试的源码组合
+
+| 仓库 | 两平台相同的完整 SHA |
+| --- | --- |
+| 内核 | `a64dce7ec2aba6b2b3f1c90366c635ac01076d06` |
+| Mini-App | `7772fd5e498b3521f9c037c8ce6b0af0e33a7454` |
+
+报告和 Mac 交接文档是上述代码的文档后继；未将文档提交冒称为已运行完整测试的代码提交。
+本次主分支仍分别为内核 `067aed2802ef0633eba4578383033bc82d5d2990`、应用 `ed8cbb8b316e5b572f45a93faca550a41a3b265e`。
+正式 `ENGINE_BASELINE.json` 保持冻结输入；内核经所有者合并后再锁定最终 SHA，重新验证配对。
+
+## 变更和边界
+
+- Mac 明确选择 `darwin-arm64`；几何检查与像素清单分离；无 Mac 目标时正式像素检查明确失败，不借用其他平台图片。
+- 两仓新增真实候选命令，输出到仓库外的新目录：两次独立截图、环境/源码、逐页比较和几何数据。来源脏、输出已存在、环境错误或截图不一致均失败并保留证据。
+- Mac 字体从实际登记字体采集，包括额外字体库；读取不全、不支持的清单结构或文件不可读均阻止验收。实际 Mac 数据结构及执行由所有者验证。
+- 精确升级 Pillow **13.0.0**、uv **0.13.4**；setup-uv Action 版本不变，只固定其 `version` 输入。更新当前测试清单、CI、README、第三方清单；历史清单不改。
+- 新增 6 项真实 Python builder 图片用例：RGB/RGBA、宽度上限和比例、JPEG 编码、二维码 PNG 无损及透明度、损坏图片的失败退出；保留 3 项无 Pillow 构建用例。
+- 产品 builder、API、DeckOutline、渲染代码、应用依赖、浏览器和正式 Golden 均未因本次工具链升级修改。
+
+## 环境与安全结论
+
+| 项目 | Windows | 独立 WSL2 |
+| --- | --- | --- |
+| 系统 | Windows 11 x64 build 26200 | Ubuntu 24.04.5 x64 / WSL2 6.18.33.2 |
+| Python | 3.12.10 | 3.12.3 |
+| uv / Pillow | 0.13.4 / 13.0.0 | 0.13.4 / 13.0.0 |
+| Python Playwright / pytest | 1.60.0 / 9.1.1 | 1.60.0 / 9.1.1 |
+| Node / pnpm / app Playwright | 22.23.3 / 9.0.0 / 1.64.0 | 22.23.3 / 9.0.0 / 1.64.0 |
+| Chrome / 视口 | 152.0.7977.64 / 1920×1080 | 152.0.7977.64 / 1920×1080 |
+
+浏览器二进制、字体指纹和启动参数均与已批准的平台清单一致；本轮没有替换正式 PNG、清单、容差或渲染参数。
+固定字体摘要与浏览器摘要见下方历史环境表；新候选记录再次验证同一组值。
+
+uv 来自官方 PyPI 发布，下载包先比对官方元数据 SHA256，再提取新 uv 启动独立环境，未借旧 uv 更新自身。
+旧环境保留为停用档案。builder、独立 tests、审计工具宿主和 ci.sh 实际 overlay 分别记录解释器、包版本/加载路径并审计。
+应用完整与生产依赖审计均零告警；Python 审计使用 pip-audit 2.10.1，未忽略告警编号或将错误当作通过。
+此前旧工具链告警及中断证据留在本地安全记录；本轮只发布修复版本与最终审计结论。
+
+uv 官方包 SHA256：Windows `b2ff80397273fff0e02c20eacae6882834c811827d6fc08f658db156fe754386`；Linux `05e4332791b4d55b6dde8695b7fa6079b26991519f44760887c5dfbd5ca4fe53`。
+提取二进制 SHA256：Windows `b9d9656370ee1812e53e985d8bbb81870038106df98ef34cb45bcf4e0fe0df17`；Linux `5b2a2df4ef04c5d778d50702d6e1d1ff22909fc883086b4ef406a4f115e3c4fb`。
+
+## 本轮实际结果（我跑过）
+
+| 检查 | Windows | WSL2 |
+| --- | --- | --- |
+| 内核完整套件 | 195 passed / 0 failed / 0 errors / 0 skipped | 195 passed / 0 failed / 0 errors / 0 skipped |
+| 快测和行数门禁 | 84 passed / 111 deselected；通过 | 同左 |
+| 内核九页正式比较 | 严格零像素差异 | 同左 |
+| 内核独立重复截图、颜色变异 | 重复零差异；只影响第 4、5 页 | 同左 |
+| 内核候选命令 | 9 页，两次独立截图一致 | 同左 |
+| 应用 TypeScript / ESLint | 通过 | 通过 |
+| 可移植测试 | 15 + 38 passed（脚本 + unit） | 15 + 38 passed（脚本 + unit） |
+| 完整跨仓测试 | 46 passed / 0 failed / 0 skipped | 46 passed / 0 failed / 0 skipped |
+| 应用 12 页几何、像素 | 全部通过；零像素差异 | 同左 |
+| 应用反误通过 | 旋转、渐变变异均拒绝 | 同左 |
+| 应用候选命令 | 12 页，两次截图和几何一致 | 同左 |
+| 生产构建 | 通过 | 通过 |
+| 应用完整/生产、Python 四类环境审计 | 零告警 | 零告警 |
+
+真实调用路径：合成中文/长内容的 DeckOutline → 应用包装层 → 新 builder Python → 单文件 HTML → 浏览器 QA。
+独立生产形状检查确认十二页、中文和嵌入 PNG、无外链脚本，并通过复制真实 builder 后缺失样式文件触发实际 Python 退出 1，验证包装层传递失败。
+持久跨仓用例同时覆盖长中文、重试后仍溢出的拒绝，以及几何命令在没有像素基线目录时完成真实构建和十二页检查。
+
+新增图片断言先用四种故意错误证明失败：禁用缩放、强制错误 JPEG 编码、丢弃透明度、吞掉损坏图片异常；各命令退出 1。
+恢复 builder 的原始字节后，6 项新用例及 3 项无 Pillow 用例合计 9 passed，未为 Pillow 13 修改产品实现。
+
+### 如实保留的非通过记录
+
+- 旧 Mac 修复候选的完整回归因旧 Python 工具链告警中断，不计为通过。
+- 本轮 Windows 初次 Python 审计遇到 TLS 连接中断；使用现有本机代理重试，未关闭 TLS，三类环境均零告警。
+- Windows 初次快测的测试断言完成，但 pytest 清理旧系统临时目录时拒绝访问，退出 1；改用全新仓库外 basetemp 后完整重跑退出 0。
+- Windows 外部日志收集器在构建退出 0、证据落盘后，打印 Unicode 符号时发生 GBK 编码错误；修正仓库外收集器的 UTF-8 输出后重跑构建，命令与收集器均退出 0。原记录保留，未修改产品代码。
+- 故意变异的非零退出用于证明断言有效，不计为验收失败或被隐去。
+- Mac 没有正式基线、没有本机全量结果；不能声称三平台全绿。
+
+## 可重复命令与证据
+
+两平台分别使用审计过的新环境，显式设置 `PPT_ENGINE_ROOT`、`PPT_PYTHON_PATH`、`PPT_CHROME_PATH`。
+`PY_TEST` 表示独立 tests 环境的 Python；`EVIDENCE` 为本平台仓库外新目录。原日志包含实际路径，公开记录只保留用途和哈希。
+
+```bash
+./tools/ci.sh --fast
+"$PY_TEST" -m pytest tests -q --basetemp="$EVIDENCE/full-tmp" --junitxml="$EVIDENCE/full.xml"
+"$PY_TEST" tools/regress.py candidate --suite 图元样板 --work "$EVIDENCE/engine-candidate"
+pnpm validate
+pnpm test:portable
+pnpm test:ppt
+pnpm test:ppt:golden:geometry
+pnpm test:ppt:golden
+pnpm exec tsx scripts/ppt-golden.ts candidate --output "$EVIDENCE/app-candidate"
+pnpm build
+pnpm audit --json
+pnpm audit --prod --json
+"$PY_AUDIT" -m pip_audit --format json --progress-spinner off --path "$ACTUAL_SITE_PACKAGES"
+```
+
+Windows 的 ci.sh 通过 Git Bash 调用原脚本；快测以 `PYTEST_ADDOPTS` 指向独立 basetemp。完整测试无筛选和跳过。
+审计对每个实际环境分别执行；CI overlay 的所有加载路径分别传入 `--path`。
+日志退出码及 SHA256（原件留在本地 evidence/security-20261021，各平台独立保存）：
+
+| 平台 | 命令记录 | 退出码 | 日志 SHA256 |
+| --- | --- | --- | --- |
+| Windows | `engine-fast-isolated` | 0 | `1f70edf0cc92c0c1cfb8203bf9f43ea724b0111bc104ca23743a6968768b89f1` |
+| Windows | `engine-full` | 0 | `822d6c3b5bfccf7517fb46a95a702fa9b4e1ebfea73a905485598b188de8488f` |
+| Windows | `engine-candidate` | 0 | `176c974f44d8cbe6b0f344308a63fccb25d5c1dc64a9f1feb6d69102867174f0` |
+| Windows | `validate` | 0 | `54fdc3e2a6f09191347779c0a0bf18c0e76d6c854aede2cb3ced531e4177fa6c` |
+| Windows | `portable` | 0 | `b1c3a0534b0e5d1e7bdd97b234ecfd2ff66826cc11c59f4710316f8613a0d0ee` |
+| Windows | `integration` | 0 | `81064513fd86774e3ca280bad9394b59b81561337a245bd5f92496ca04e9c2c3` |
+| Windows | `geometry` | 0 | `9453e714e275a3974bed38e901bfbbc00c1bda9bfdd68ec5d2706125f7224e78` |
+| Windows | `pixel` | 0 | `dc850b5d78b12c2f7fe895175f023e2794879eb1fe757c3bcd4ddac04f74543d` |
+| Windows | `app-candidate` | 0 | `2ee3e3625564ce20e8d3e76ad2ed1ba687a5b3438fc3d2ad3081f9faf68847bb` |
+| Windows | `production` | 0 | `66c7f7b9b957ae35f61a3baa334746776a53ecec7b40d76e8ab071dd18303266` |
+| Windows | `build-utf8` | 0 | `6404f72d3d97c97dc87b183e3ee43ee36e19ba6944340b04eaa7e3531d34d111` |
+| Windows | `audit-npm-full` | 0 | `6cadcf2e93ca634e41afe74f167d3a4f653bef848f631edcb2b577d84b5870b9` |
+| Windows | `audit-npm-prod` | 0 | `36872159045ec6e4454410c8f52e9219e00a49a67cc78a3a520e3a3744ac15bf` |
+| Windows | `audit-python-ci` | 0 | `249fd9d67e64c91f20e10467099b7ac50d1f9ec49913e4cd7a8531d8f15e8a2d` |
+| Windows | `audit-python-builder-retry1` | 0 | `1a3b3c23910d1bed8a631905f10502517987c29a8cafdfb2b7de1c6c879b6124` |
+| Windows | `audit-python-tests-retry1` | 0 | `89ba39573d1b5ff49db52453b7e4699033a5d01ef2b71cd3e153fd705f2a96c9` |
+| Windows | `audit-python-host-retry1` | 0 | `661f90e721b9b5e54e7148f6d02f89890cb8a91a9cc750d96fe30f7437d6651b` |
+| WSL2 | `engine-fast` | 0 | `65a6adac42686057eb69af89dfa8e5e4f168f289b80408521b1c69579158ca99` |
+| WSL2 | `engine-full` | 0 | `10d6a85a2917bb7ac0689f09d8612ea32e38cc59c7d6aa888ff21f25876e4149` |
+| WSL2 | `engine-candidate` | 0 | `b21a2b416581254030723d437689353a7d0c5f0172c5a79db9c24e6c50d76232` |
+| WSL2 | `validate` | 0 | `59f75ec051a109facf77ac75976c900128e595a85aa9541e59caba5189e7f374` |
+| WSL2 | `portable` | 0 | `362c8ddccb701c006b46d0ad9bf3ee0e7e8fa2a0bd8220effd0e20b22c640bb8` |
+| WSL2 | `integration` | 0 | `e3ed438e9e38ce8f00e1096593b8db128480f4eaf6b17e6649a5217ba8358ae4` |
+| WSL2 | `geometry` | 0 | `961c1baf8e66447e08f131f7f614ca6eea03ee105aae4ccbeee256a19e070b87` |
+| WSL2 | `pixel` | 0 | `3b39a53bc2eb9eb95216c940df5eb6660b60e15656ae470bbdc2ddd81f20148e` |
+| WSL2 | `app-candidate` | 0 | `2ee3e3625564ce20e8d3e76ad2ed1ba687a5b3438fc3d2ad3081f9faf68847bb` |
+| WSL2 | `production` | 0 | `91265fe259a13506dda7280aa3e0f4b1d41d50160db87b9b0e4ed67cb729fe01` |
+| WSL2 | `build` | 0 | `35188d3a3715727b6f889ba625e18659456a8294caa9b97bde821187ddecb2f9` |
+| WSL2 | `audit-npm-full` | 0 | `6cadcf2e93ca634e41afe74f167d3a4f653bef848f631edcb2b577d84b5870b9` |
+| WSL2 | `audit-npm-prod` | 0 | `36872159045ec6e4454410c8f52e9219e00a49a67cc78a3a520e3a3744ac15bf` |
+| WSL2 | `audit-python-ci` | 0 | `f026d4d6d30efbbe754fe352c8e96cb03740d671f245d9f2e2bf3529f46f65c9` |
+| WSL2 | `audit-python-builder` | 0 | `7ba557bf3b0d2f0d794bff89a39c08a6a0263175b06cf5238be233c033697aa3` |
+| WSL2 | `audit-python-tests` | 0 | `3b00746839c342ad22215d3e953fd51c13c5a6e61a1e791a21c45ef0d00e1528` |
+| WSL2 | `audit-python-host` | 0 | `a16df403d654d34e05ec112de86ea996fe36ac0f86ca294c4c7addaeb0540f27` |
+
+## 来源复核、审批与回滚
+
+已运行两仓完整 Git 历史秘密扫描，并复核跟踪文件、待提交清单及资产来源。
+本次未新增图片资产；旧 Golden 和已批准 Windows/Linux 基线共 69 个文件均未修改。
+历史中一条非匿名贡献者身份已由所有者明确允许保留，不在公开报告复述联系方式。
+治理文档与分支均对应 PPT Issue #1，Accepted Plan/ADR 有效；继续现有 PR 的例外已记录。
+仓库无共享工作流硬门禁，已做人工对应检查，不宣称额外硬门禁已安装。
+
+完整审批索引见 [VISUAL_APPROVAL_INDEX.md](VISUAL_APPROVAL_INDEX.md)。
+所有者 Mac 实机说明见 [MAC_ACCEPTANCE.md](MAC_ACCEPTANCE.md)。
+聊天中已有的 Windows/Linux 视觉批准不等于 GitHub Architect Review；请所有者在 PR 按索引确认。
+Mac 新候选需另行明确批准，采用后再完整复验。内核合并后更新正式应用锁并验证最终配对。
+
+回滚采用新的 revert PR，按兼容修复、依赖/CI、图片测试和文档提交分别审查；保留旧记录和基线。
+回退到已知存在告警的依赖会恢复安全阻塞，不得作为可放行方案。不改写 main、旧标签或删除工作树。
+
+---
+
+## 历史报告原文（保留，不代表 2026-10-21 的当前状态）
+
 # PPT Issue #1：双平台获批视觉基线采用与复验
 
 ## 当前结论（2026-10-20）

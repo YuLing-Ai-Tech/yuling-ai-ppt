@@ -16,6 +16,10 @@ HTML presentation and provides visual-quality checks for the engine surface.
 
 ## Requirements
 
+For the Issue #1 candidate pair, native Mac setup and remaining acceptance gates,
+see [MAC_ACCEPTANCE.md](MAC_ACCEPTANCE.md) and
+[BASELINE_REPRODUCTION.md](BASELINE_REPRODUCTION.md).
+
 - Python 3.12
 - `uv` 0.13.4
 - Chrome or Chromium for browser-based smoke tests
