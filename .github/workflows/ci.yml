@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.0
         with:
+          version: "0.13.4"
           python-version: "3.12"
       - name: Line limits and non-browser tests
         run: ./tools/ci.sh --fast

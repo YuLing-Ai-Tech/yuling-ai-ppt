@@ -4,7 +4,7 @@
 set -o pipefail
 cd "$(dirname "$0")/.."
 # 与回归基准同一套工具链（系统 python3 没装 playwright）
-PY=(uv run --no-project --python 3.12 --with playwright==1.60.0 --with pillow==12.3.0 --with pytest==9.1.1 python)
+PY=(uv run --no-project --python 3.12 --with playwright==1.60.0 --with pillow==13.0.0 --with pytest==9.1.1 python)
 echo "== 行数门禁"; "${PY[@]}" tools/check_line_limits.py || exit $?
 if [[ "$1" == "--fast" ]]; then
   echo "== 快测（不含 smoke）"; "${PY[@]}" -m pytest -q -m "not slow and not smoke" || exit $?

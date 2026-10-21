@@ -1,5 +1,8 @@
 """苹果风原版回归：确定性逐页截图，和甬舟 94 页基准逐像素比对，证明"改过的引擎 = 原版效果"。
 
+Public 图元样板：engine 检查使用 platforms/<系统>-x64 的获批目标，先核验环境。
+根目录图片为历史档案，不再由 baseline 子命令覆盖；新目标必须先审查候选原图。
+
 用法：
   python3 tools/regress.py engine [--engine-root 目录] [--work 目录] [--suite 甬舟94|图元样板]
       改过引擎就跑这个：默认（--suite 甬舟94）用 风格清单 + examples/甬舟94 构建 94 页，截图后和 baselines/甬舟94 基准比对；
@@ -34,6 +37,7 @@ import hashlib
 import importlib.metadata
 import json
 import os
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -45,6 +49,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 from tools.build_deck import build  # noqa: E402
+from tools.visual_environment import environment_snapshot, platform_baseline, require_environment, reserve_candidate_directory  # noqa: E402
 
 EXAMPLE_DECK_DIR = REPO / "examples/甬舟94"
 BASELINE_DIR = REPO / "baselines/甬舟94"
@@ -99,7 +104,7 @@ def write_frozen_copy(deck_path, target_dir):
     return frozen_path
 
 
-async def shoot_page(browser, deck_uri, page_number, shot_dir, errors):
+async def shoot_page(browser, deck_uri, page_number, shot_dir, errors, geometry=None):
     page = await browser.new_page(viewport=VIEWPORT)
     page.on("pageerror", lambda error: errors.append(f"第 {page_number} 页：{error}"))
     await page.clock.install(time=CLOCK_START_MS)
@@ -107,19 +112,34 @@ async def shoot_page(browser, deck_uri, page_number, shot_dir, errors):
     await page.goto(f"{deck_uri}#{page_number}")
     await page.clock.run_for(SETTLE_RUN_MS)
     await page.screenshot(path=str(shot_dir / f"p{page_number:02d}.png"))
+    if geometry is not None:
+        geometry[page_number] = await page.evaluate("""() => [...document.querySelectorAll('.slide.active [data-at]')].map(node => {
+            const rect = node.getBoundingClientRect();
+            return {at: node.dataset.at, x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+        })""")
     await page.close()
 
 
-async def shoot_deck(deck_path, shot_dir):
+async def shoot_deck(deck_path, shot_dir, expected_environment=None, record_environment=False):
     """逐页确定性截图，返回 (页数, JS 报错列表, 浏览器版本)。"""
     shot_dir.mkdir(parents=True, exist_ok=True)
     for old_shot in shot_dir.glob("p*.png"):
         old_shot.unlink()
     errors = []
+    geometry = {} if record_environment else None
+    environment = None
     with tempfile.TemporaryDirectory(prefix="regress_frozen_") as frozen_dir:
         deck_uri = write_frozen_copy(deck_path, Path(frozen_dir)).as_uri()
         async with async_playwright() as playwright:
             browser = await playwright.chromium.launch(**browser_launch_kwargs(CHROME_ARGS))
+            if record_environment:
+                environment = environment_snapshot(os.environ.get("PPT_CHROME_PATH"), browser.version, CHROME_ARGS, VIEWPORT)
+                if environment["chromeVersion"] != "152.0.7977.64" or environment["playwrightVersion"] != "1.60.0":
+                    await browser.close()
+                    raise ValueError("Candidate requires Chrome 152.0.7977.64 and Playwright 1.60.0")
+            if expected_environment is not None:
+                require_environment(expected_environment, environment_snapshot(
+                    os.environ.get("PPT_CHROME_PATH"), browser.version, CHROME_ARGS, VIEWPORT))
             counter = await browser.new_page()
             await counter.goto(deck_uri)
             total = await counter.evaluate("document.querySelectorAll('.slide').length")
@@ -128,12 +148,15 @@ async def shoot_deck(deck_path, shot_dir):
 
             async def limited(page_number):
                 async with limiter:
-                    await shoot_page(browser, deck_uri, page_number, shot_dir, errors)
+                    await shoot_page(browser, deck_uri, page_number, shot_dir, errors, geometry)
 
             await asyncio.gather(*(limited(number) for number in range(1, total + 1)))
             browser_version = browser.version
             await browser.close()
     write_meta(shot_dir, deck_path, total, browser_version)
+    if record_environment:
+        (shot_dir / "environment.json").write_text(json.dumps(environment, indent=2) + "\n", encoding="utf-8")
+        (shot_dir / "geometry.json").write_text(json.dumps(geometry, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return total, errors, browser_version
 
 
@@ -192,9 +215,14 @@ def compare_shots(baseline_dir, shot_dir, diff_dir):
 
 def warn_version_change(baseline_dir, shot_dir):
     try:
-        baseline_meta = json.loads((baseline_dir / "meta.json").read_text())
+        meta_path = baseline_dir / "meta.json"
+        if meta_path.exists():
+            baseline_meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        else:
+            environment = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))["environment"]
+            baseline_meta = {"chrome": environment["chromeVersion"], "playwright": environment["playwrightVersion"]}
         shot_meta = json.loads((shot_dir / "meta.json").read_text())
-    except (OSError, json.JSONDecodeError):
+    except (OSError, KeyError, json.JSONDecodeError):
         print("提示：缺少 meta.json，无法核对浏览器版本")
         return
     for key in ("chrome", "playwright"):
@@ -208,8 +236,8 @@ def build_example_deck(engine_root, build_dir, deck_dir=EXAMPLE_DECK_DIR):
     return build(Path(deck_dir).resolve(), Path(engine_root).resolve(), build_dir / "regress.html", [])["out"]
 
 
-def shoot(deck_path, shot_dir):
-    total, errors, browser_version = asyncio.run(shoot_deck(Path(deck_path), Path(shot_dir)))
+def shoot(deck_path, shot_dir, expected_environment=None):
+    total, errors, browser_version = asyncio.run(shoot_deck(Path(deck_path), Path(shot_dir), expected_environment))
     print(f"截图 {total} 页（Chrome {browser_version}）；JS 报错：{errors or '无'}")
     return not errors
 
@@ -236,8 +264,8 @@ def rebaseline(deck_path, baseline_dir):
 
 
 def verify_baseline_manifest(baseline_dir):
-    """基准 PNG 不进 git，比对前先核对它们和已提交的清单一致，防止拿错基准比出假绿。"""
-    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text())
+    """比对前核对基准 PNG 和已提交清单一致，防止拿错基准比出假绿。"""
+    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))
     mismatched = [name for name, digest in manifest["sha256"].items()
                   if not (baseline_dir / name).exists() or png_digest(baseline_dir / name) != digest]
     return sorted(mismatched)
@@ -253,8 +281,12 @@ def run_engine_check(engine_root, work_dir, deck_dir=None, baseline_dir=None):
     if mismatched:
         print(f"基准截图和清单不一致：{mismatched}；先用 baseline 子命令重做或找回正确基准")
         return False, []
+    manifest = json.loads((baseline_dir / MANIFEST_NAME).read_text(encoding="utf-8"))
+    expected_environment = manifest.get("environment")
+    if Path(baseline_dir).parent.name == "platforms" and expected_environment is None:
+        raise ValueError("Platform baseline environment missing")
     deck_path = build_example_deck(engine_root, work_dir / "build", deck_dir)
-    shots_ok = shoot(deck_path, work_dir / "shots")
+    shots_ok = shoot(deck_path, work_dir / "shots", expected_environment)
     compare_ok, failed_pages = compare_shots(baseline_dir, work_dir / "shots", work_dir / "diffs")
     if failed_pages:
         print(f"首拍差异页 {failed_pages}，逐页单独重拍一次再比；首拍差异图改名为 d<页号>-首拍.png 保留")
@@ -288,6 +320,9 @@ async def retake_pages(deck_path, shot_dir, page_numbers):
 def parse_args():
     parser = argparse.ArgumentParser(description="苹果风原版回归：确定性截图 + 逐像素比对")
     commands = parser.add_subparsers(dest="command", required=True)
+    candidate = commands.add_parser("candidate", help="Capture two independent candidate runs outside repositories; never adopt a baseline")
+    candidate.add_argument("--suite", choices=["图元样板"], required=True)
+    candidate.add_argument("--work", type=Path, required=True)
     engine = commands.add_parser("engine", help="用引擎 + examples/甬舟94 构建 94 页并和基准比对")
     engine.add_argument("--engine-root", type=Path, default=REPO, help="引擎根目录（含 styles/<风格>/manifest.json），默认仓库根")
     engine.add_argument("--work", type=Path, default=None, help="构建、截图、差异图放哪，默认新建临时目录")
@@ -305,13 +340,58 @@ def parse_args():
     return parser.parse_args()
 
 
+def capture_candidate(work):
+    work = reserve_candidate_directory(work)
+    source = {
+        "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO).decode().strip(),
+        "dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO)),
+    }
+    report = {"status": "incomplete", "source": source, "pythonVersion": sys.version.split()[0],
+              "pillowVersion": importlib.metadata.version("pillow"), "approved": False}
+    report_path = work / "candidate.json"
+    try:
+        if source["dirty"]:
+            raise ValueError("Candidate capture requires a clean source commit")
+        deck = build_example_deck(REPO, work / "build", SUITES["图元样板"][0])
+        for name in ("candidate-a", "candidate-b"):
+            total, errors, _ = asyncio.run(shoot_deck(deck, work / name, record_environment=True))
+            if total != 9 or errors:
+                raise ValueError(f"Candidate capture failed: {total} pages, {len(errors)} JS errors")
+        env_a = json.loads((work / "candidate-a/environment.json").read_text())
+        env_b = json.loads((work / "candidate-b/environment.json").read_text())
+        require_environment(env_a, env_b)
+        report["environment"] = env_a
+        passed, pages = compare_shots(work / "candidate-a", work / "candidate-b", work / "diffs")
+        report["differentPages"] = pages
+        report["sha256"] = {p.name: png_digest(p) for p in sorted((work / "candidate-a").glob("p*.png"))}
+        hashes_equal = all(png_digest(work / "candidate-b" / name) == digest for name, digest in report["sha256"].items())
+        if not passed or not hashes_equal:
+            raise ValueError("Independent candidate captures differ; evidence retained")
+        if subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO) or source["commit"] != subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO).decode().strip():
+            raise ValueError("Source changed during candidate capture")
+        report["status"] = "repeatable; owner review required"
+        return True
+    except Exception as error:
+        report["failure"] = str(error)
+        raise
+    finally:
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+
 def main():
     args = parse_args()
-    if args.command == "engine":
+    if args.command == "candidate":
+        passed = capture_candidate(args.work)
+    elif args.command == "engine":
         work_dir = args.work or Path(tempfile.mkdtemp(prefix="regress_engine_"))
         print(f"工作目录：{work_dir}")
-        passed, _ = run_engine_check(args.engine_root, work_dir, *SUITES[args.suite])
+        deck_dir, baseline_dir = SUITES[args.suite]
+        if args.suite == "图元样板":
+            baseline_dir = platform_baseline(baseline_dir)
+        passed, _ = run_engine_check(args.engine_root, work_dir, deck_dir, baseline_dir)
     elif args.command == "baseline":
+        if args.suite == "图元样板":
+            raise SystemExit("Platform baselines require reviewed candidate images; automatic re-recording is disabled")
         passed = rebaseline(args.deck, SUITES[args.suite][1])
     elif args.command == "shoot":
         passed = shoot(args.deck, args.shot_dir)

@@ -14,11 +14,13 @@ BASELINE_DIR = REPO / "baselines/图元样板"
 
 def test_diagram_baseline_manifest_matches_pngs():
     assert regress.verify_baseline_manifest(BASELINE_DIR) == []
+    for key in ("win32-x64", "linux-x64"):
+        assert regress.verify_baseline_manifest(BASELINE_DIR / "platforms" / key) == []
 
 
 @pytest.mark.slow
 def test_diagram_samples_match_baseline_zero_diff(tmp_path):
-    assert regress.run_engine_check(REPO, tmp_path, DECK_DIR, BASELINE_DIR) == (True, [])
+    assert regress.run_engine_check(REPO, tmp_path, DECK_DIR, regress.platform_baseline(BASELINE_DIR)) == (True, [])
 
 
 @pytest.mark.slow
@@ -31,6 +33,9 @@ def test_diagram_samples_shot_twice_identical(tmp_path):
 
 @pytest.mark.slow
 def test_flow_human_mutation_is_caught_on_pages_4_and_5(tmp_path):
+    control_deck = regress.build_example_deck(REPO, tmp_path / "control-build", DECK_DIR)
+    assert regress.shoot(control_deck, tmp_path / "control-shots")
+
     root = tmp_path / "root"
     for name in ("runtime", "components", "styles"):
         shutil.copytree(REPO / name, root / name)
@@ -38,4 +43,8 @@ def test_flow_human_mutation_is_caught_on_pages_4_and_5(tmp_path):
     assert token_file.read_text().count("--flow-human: #FF2D55;") == 1
     token_file.write_text(token_file.read_text().replace("--flow-human: #FF2D55;", "--flow-human: #2DFF55;"))
     # 样板里只有流程图（第 4 页）和泳道（第 5 页）用了 human 类连线
-    assert regress.run_engine_check(root, tmp_path / "work", DECK_DIR, BASELINE_DIR) == (False, [4, 5])
+    mutated_deck = regress.build_example_deck(root, tmp_path / "mutated-build", DECK_DIR)
+    assert regress.shoot(mutated_deck, tmp_path / "mutated-shots")
+    assert regress.compare_shots(
+        tmp_path / "control-shots", tmp_path / "mutated-shots", tmp_path / "mutation-diffs"
+    ) == (False, [4, 5])

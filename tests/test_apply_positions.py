@@ -25,7 +25,7 @@ def make_deck(tmp_path, slides):
     (tmp_path / "slides").mkdir(parents=True)
     (tmp_path / "deck.json").write_text('{"title": "t", "output": "t.html", "style": "苹果风"}', encoding="utf-8")
     for name, body in slides.items():
-        (tmp_path / "slides" / name).write_text(body, encoding="utf-8")
+        (tmp_path / "slides" / name).write_text(body, encoding="utf-8", newline="")
     return tmp_path
 
 

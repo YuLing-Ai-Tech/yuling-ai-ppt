@@ -16,8 +16,12 @@ HTML presentation and provides visual-quality checks for the engine surface.
 
 ## Requirements
 
+For the Issue #1 candidate pair, native Mac setup and remaining acceptance gates,
+see [MAC_ACCEPTANCE.md](MAC_ACCEPTANCE.md) and
+[BASELINE_REPRODUCTION.md](BASELINE_REPRODUCTION.md).
+
 - Python 3.12
-- `uv`
+- `uv` 0.13.4
 - Chrome or Chromium for browser-based smoke tests
 
 Visual QA uses the system Chrome by default. To pin an isolated browser binary
@@ -45,7 +49,7 @@ Portable engine suite:
 
 ```bash
 uv run --no-project --python 3.12 \
-  --with playwright==1.60.0 --with pillow==12.3.0 --with pytest==9.1.1 \
+  --with playwright==1.60.0 --with pillow==13.0.0 --with pytest==9.1.1 \
   python -m pytest tests -q
 ```
 
